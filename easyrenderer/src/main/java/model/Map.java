@@ -146,4 +146,19 @@ public class Map {
 	public Double getLonScale() {
 		return this.getMaxNode().getLon() - this.getMinNode().getLon();
 	}
+	
+	public Boolean wayIsPresent(int id) {
+		List<Way> ways = this.getWays();
+		for(int i=0; i<ways.size(); i++) {
+			if(ways.get(i).getId().equals(new Double(id))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Boolean nodeIsPresent(int id) {
+		Node n = this.nodes.get(id);
+		return n != null;
+	}
 }

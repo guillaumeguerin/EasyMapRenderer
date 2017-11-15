@@ -13,11 +13,11 @@ public class NodeParser extends Parser{
 			String s = "";
 			if(line[i].startsWith("lat")) {
 				s = line[i].split("=")[1].replace("'", "");
-				myNode.setLon(Double.parseDouble(s));
+				myNode.setLat(Double.parseDouble(s));
 			}
 			else if(line[i].startsWith("lon")) {
 				s = line[i].split("=")[1].replace("'", "").replaceAll(">", "");
-				myNode.setLat(Double.parseDouble(s));
+				myNode.setLon(Double.parseDouble(s));
 			}
 			else if(line[i].startsWith("id")) {
 				s = line[i].split("=")[1].replace("'", "");

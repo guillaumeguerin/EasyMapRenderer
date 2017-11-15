@@ -10,13 +10,15 @@ import model.Map;
 import model.Way;
 
 public class SQLiteJDBC {
-  public static void initTables() {
-      Connection c = null;
+	
+	private static ConnectionSingleton cs = null;
+	
+  public static void initTables() throws SQLException {
+      
       
       try {
          Class.forName("org.sqlite.JDBC");
-         c = DriverManager.getConnection("jdbc:sqlite:test.db");
-         
+         Connection c = ConnectionSingleton.getInstance().getConnection();
          System.out.println("Opened database successfully");
          Statement stmt = null;
          stmt = c.createStatement();
@@ -34,7 +36,6 @@ public class SQLiteJDBC {
          stmt.executeUpdate(sql);
          
          stmt.close();
-         c.close();
       } catch ( Exception e ) {
          System.err.println( e.getClass().getName() + ": " + e.getMessage() );
          System.exit(0);
@@ -48,7 +49,7 @@ public class SQLiteJDBC {
       
       try {
     	   Class.forName("org.sqlite.JDBC");
-    	   Connection conn = DriverManager.getConnection("jdbc:sqlite:test.db");
+    	   Connection conn = ConnectionSingleton.getInstance().getConnection();
            Statement stmt  = conn.createStatement();
            ResultSet rs    = stmt.executeQuery(sql);
           
@@ -58,7 +59,6 @@ public class SQLiteJDBC {
           }
           
           stmt.close();
-          conn.close();
       } 
       catch (Exception e) {
           System.out.println(e.getMessage());
@@ -71,7 +71,7 @@ public class SQLiteJDBC {
 		 
         try {
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:test.db");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, node.getId().intValue());
             pstmt.setDouble(2, node.getLat());
@@ -88,7 +88,7 @@ public class SQLiteJDBC {
 		 
         try {
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:test.db");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, way.getId().intValue());
             pstmt.setString(2, way.getType1());
@@ -104,7 +104,7 @@ public class SQLiteJDBC {
 		 
         try {
             Class.forName("org.sqlite.JDBC");
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:test.db");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, w.getId().intValue());
             pstmt.setInt(2, nodeID);
@@ -246,31 +246,43 @@ public class SQLiteJDBC {
 	      sql = sql.replace(", \"\"", "");
 	      try {
 	    	   Class.forName("org.sqlite.JDBC");
-	    	   Connection conn = DriverManager.getConnection("jdbc:sqlite:test.db");
+	    	   Connection conn = ConnectionSingleton.getInstance().getConnection();
 	           Statement stmt  = conn.createStatement();
 	           ResultSet rs    = stmt.executeQuery(sql);
 	          
 	           int previousWayId = -1;
+	           String previousType1 = "";
+	           String previousType2 = "";
 	           List<Double> currentWayNodeIds = new ArrayList<Double>();
 	          // loop through the result set
 	          while (rs.next()) {
 	        	  int nodeId = rs.getInt("ID");
+	        	  if(nodeId == 371745135) {
+	        		  System.out.println("aa");
+	        	  }
 	        	  Node n = new Node(new Double(nodeId), rs.getDouble("LAT"), rs.getDouble("LON"));
 	              resultNodes.add(n);
 	              currentWayNodeIds.add(new Double(nodeId));
 	              int currentWayId = rs.getInt("WAY");
+	              
+	              if(previousWayId == -1) {
+	            	  previousType1 = rs.getString("TYPE1");
+	            	  previousType2 = rs.getString("TYPE2");
+	              }
+	              
 	              if(previousWayId == -1 || previousWayId != currentWayId) {
-	            	  Way w = new Way(new Double(previousWayId), rs.getString("TYPE1"), rs.getString("TYPE2"));
+	            	  Way w = new Way(new Double(previousWayId), previousType1, previousType2);
 	            	  w.setNodes(currentWayNodeIds);
 	            	  resultWays.add(w);
 	            	  currentWayNodeIds = new ArrayList<Double>();
 	            	  previousWayId = currentWayId;
+	            	  previousType1 = rs.getString("TYPE1");
+	            	  previousType2 = rs.getString("TYPE2");
 	              }
 	              
 	          }
 	          
 	          stmt.close();
-	          conn.close();
 	          
 	          m.setNodes(resultNodes);
 	          m.setWays(resultWays);
