@@ -92,7 +92,7 @@ public class Map {
 	}
 	
 	public Node computeMinNode() {
-		return computeMinNode(this.getNodes());
+		return computeMinNode(getAllMapNodes());
 	}
 	
 	/**
@@ -123,7 +123,18 @@ public class Map {
 	}
 	
 	public Node computeMaxNode() {
-		return computeMaxNode(this.getNodes());
+		return computeMaxNode(getAllMapNodes());
+	}
+	
+	public List<Node> getAllMapNodes() {
+		List<Node> allNodes = new ArrayList<Node>();
+		List<Way> ways = this.getWays();
+		if(this.getWays() != null) {
+			for(Way way : ways) {
+				allNodes.addAll(way.getNodes());
+			}
+		}
+		return allNodes;
 	}
 
 	public Map(HashMap<Integer, Node> n, List<Way> w) {

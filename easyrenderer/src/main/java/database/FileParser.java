@@ -11,6 +11,8 @@ import exceptions.DrawingException;
 import exceptions.ParseException;
 import model.Map;
 import model.Node;
+import model.Relation;
+import model.Tag;
 import model.Way;
 import parser.XMLParserFacade;
 
@@ -25,6 +27,12 @@ public class FileParser {
 			}
 			else if(osmList.get(i) instanceof Way) {
 				SQLiteJDBC.insertWay((Way) osmList.get(i));
+			}
+			else if(osmList.get(i) instanceof Relation) {
+				SQLiteJDBC.insertRelation((Relation) osmList.get(i));
+			}
+			else if(osmList.get(i) instanceof Tag) {
+				SQLiteJDBC.insertTag((Tag) osmList.get(i));
 			}
 		}
 		
@@ -54,9 +62,14 @@ public class FileParser {
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
-				osmList.add(o);
+				if(!o.equals(new Object())) {
+					osmList.add(o);
+				}
 			}
-			if(!SQLiteJDBC.tableExists("NODE") && !SQLiteJDBC.tableExists("WAY")) {
+			if(!SQLiteJDBC.tableExists("NODE") && !SQLiteJDBC.tableExists("WAY")
+					&& !SQLiteJDBC.tableExists("RELATION")
+					&& !SQLiteJDBC.tableExists("WAY_TAG")
+					&& !SQLiteJDBC.tableExists("RELATION_TAG")) {
 				try {
 					SQLiteJDBC.initTables();
 				} catch (SQLException e) {

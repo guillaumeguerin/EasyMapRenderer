@@ -2,10 +2,13 @@ package database;
 
 import java.io.File;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import model.Node;
+import model.Relation;
+import model.Tag;
 import model.Map;
 import model.Way;
 
@@ -23,14 +26,25 @@ public class SQLiteJDBC {
          Statement stmt = null;
          stmt = c.createStatement();
          String sql = "CREATE TABLE NODE " +
-                        "(ID INT PRIMARY KEY     NOT NULL," +
+                        "(ID DOUBLE PRIMARY KEY     NOT NULL," +
                         " LAT            REAL    NOT NULL, " + 
                         " LON            REAL    NOT NULL, " +
-                        " WAY            INT     NOT NULL)";
+                        " WAY            DOUBLE)";
          stmt.executeUpdate(sql);
          
          sql = "CREATE TABLE WAY " +
-                 "(ID INT PRIMARY KEY     NOT NULL," +
+                 "(ID DOUBLE PRIMARY KEY    NOT NULL," +
+                 " RELATION  DOUBLE)";
+         stmt.executeUpdate(sql);
+         
+         sql = "CREATE TABLE RELATION " +
+                 "(ID DOUBLE PRIMARY KEY     NOT NULL" +
+                 " )";
+         stmt.executeUpdate(sql);
+         
+         sql = "CREATE TABLE TAG " +
+                 "(ID DOUBLE PRIMARY KEY     NOT NULL," +
+                 " USED_BY DOUBLE," +
                  " TYPE1          TEXT, " + 
                  " TYPE2          TEXT)";
          stmt.executeUpdate(sql);
@@ -73,7 +87,7 @@ public class SQLiteJDBC {
             Class.forName("org.sqlite.JDBC");
             Connection conn = ConnectionSingleton.getInstance().getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, node.getId().intValue());
+            pstmt.setDouble(1, node.getId());
             pstmt.setDouble(2, node.getLat());
             pstmt.setDouble(3, node.getLon());
             pstmt.setInt(4, 0);
@@ -84,30 +98,118 @@ public class SQLiteJDBC {
 	}
 	
 	public static void insertWay(Way way) {
-		String sql = "INSERT INTO WAY(ID,TYPE1,TYPE2) VALUES(?,?,?)";
+		String sql = "INSERT INTO WAY(ID) VALUES(?)";
 		 
         try {
             Class.forName("org.sqlite.JDBC");
             Connection conn = ConnectionSingleton.getInstance().getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, way.getId().intValue());
-            pstmt.setString(2, way.getType1());
-            pstmt.setString(3, way.getType2());
+            pstmt.setDouble(1, way.getId());
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        if(way.getTags() != null) {
+        	for(Tag t : way.getTags()) {
+            	insertTag(t, way.getId());
+            }
+        }
+        
+	}
+	
+	public static void insertRelation(Relation relation) {
+		String sql = "INSERT INTO RELATION(ID) VALUES(?)";
+		 
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setDouble(1, relation.getId());
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        if(relation.getTags() != null) {
+        	for(Tag t : relation.getTags()) {
+            	insertTag(t, relation.getId());
+            }
+        }
+        
+	}
+	
+	public static void insertTag(Tag tag) {
+		String sql = "INSERT INTO TAG(ID, TYPE1, TYPE2) VALUES(?,?,?)";
+		 
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setDouble(1, SequenceSingleton.getInstance().getId().intValue());
+            pstmt.setString(2, tag.getType1());
+            pstmt.setString(3, tag.getType2());
             pstmt.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 	}
 	
-	public static void updateNode(Way w, int nodeID) {
+	public static void insertTag(Tag tag, Double usedId) {
+		String sql = "INSERT INTO TAG(ID, USED_BY, TYPE1, TYPE2) VALUES(?,?,?,?)";
+		 
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setDouble(1, SequenceSingleton.getInstance().getId().intValue());
+            pstmt.setDouble(2, usedId);
+            pstmt.setString(3, tag.getType1());
+            pstmt.setString(4, tag.getType2());
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+	}
+	
+	public static void updateNode(Way w, Node node) {
 		String sql = "UPDATE NODE SET WAY = ? WHERE ID = ?";
 		 
         try {
             Class.forName("org.sqlite.JDBC");
             Connection conn = ConnectionSingleton.getInstance().getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, w.getId().intValue());
-            pstmt.setInt(2, nodeID);
+            pstmt.setDouble(1, w.getId());
+            pstmt.setDouble(2, node.getId());
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+	}
+	
+	public static void updateWay(Relation r, Double wayID) {
+		String sql = "UPDATE WAY SET RELATION = ? WHERE ID = ?";
+		 
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setDouble(1, r.getId());
+            pstmt.setDouble(2, wayID);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+	}
+	
+	public static void updateTag(Double itemId, Double tagId) {
+		String sql = "UPDATE TAG SET USED_BY = ? WHERE ID = ?";
+		 
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setDouble(1, itemId);
+            pstmt.setDouble(2, tagId);
             pstmt.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -116,7 +218,7 @@ public class SQLiteJDBC {
 	
 	public static void updateAllNodes(Way w) {
 		for(int i=0; i<w.getNodes().size(); i++) {
-			 updateNode(w, w.getNodes().get(i).intValue());
+			 updateNode(w, w.getNodes().get(i));
 		}
 	}
 	
@@ -129,170 +231,76 @@ public class SQLiteJDBC {
 		List<Node> resultNodes = new ArrayList<Node>();
 		List<Way> resultWays = new ArrayList<Way>();
 		Map m = new Map();
-		
-		  String sql = "SELECT NODE.ID, NODE.LAT, NODE.LON, WAY.TYPE1, WAY.TYPE2, NODE.WAY FROM NODE INNER JOIN WAY ON NODE.WAY = WAY.ID WHERE LAT >= "+ minLat +" AND LAT <= " + maxLat + " AND LON >= "+ minLon +" AND LON <= " + maxLon + " ";
-	      sql += "AND TYPE1 IN (\"natural\"";
-	      if(zoomLevel > 1) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 2) {
-	    	  sql += ", \"landuse\"";
-	      }
-	      if(zoomLevel > 3) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 4) {
-	    	  sql += ", \"parking\"";
-	      }
-	      if(zoomLevel > 5) {
-	    	  sql += ", \"highway\"";
-	      }
-	      if(zoomLevel > 6) {
-	    	  sql += ", \"surface\"";
-	      }
-	      if(zoomLevel > 7) {
-	    	  sql += ", \"junction\"";
-	      }
-	      if(zoomLevel > 8) {
-	    	  sql += ", \"railway\"";
-	      }
-	      if(zoomLevel > 9) {
-	    	  sql += ", \"sport\"";
-	      }
-	      if(zoomLevel > 10) {
-	    	  sql += ", \"leisure\"";
-	      }
-	      if(zoomLevel > 11) {
-	    	  sql += ", \"tunnel\"";
-	      }
-	      if(zoomLevel > 12) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 13) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 14) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 15) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 16) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 17) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 18) {
-	    	  sql += ", \"\"";
-	      }
-	      sql += ") AND TYPE2 IN (\"coastline\"";
-	      if(zoomLevel > 1) {
-	    	  sql += ", \"water\", \"sand\"";
-	      }
-	      if(zoomLevel > 2) {
-	    	  sql += ", \"forest\"";
-	      }
-	      if(zoomLevel > 3) {
-	    	  sql += ", \"wetland\"";
-	      }
-	      if(zoomLevel > 4) {
-	    	  sql += ", \"surface\"";
-	      }
-	      if(zoomLevel > 5) {
-	    	  sql += ", \"primary\"";
-	      }
-	      if(zoomLevel > 6) {
-	    	  sql += ", \"roundabout\", \"rail\"";
-	      }
-	      if(zoomLevel > 7) {
-	    	  sql += ", \"residential\"";
-	      }
-	      if(zoomLevel > 8) {
-	    	  sql += ", \"service\"";
-	      }
-	      if(zoomLevel > 9) {
-	    	  sql += ", \"oneway\"";
-	      }
-	      if(zoomLevel > 10) {
-	    	  sql += ", \"cycleway\"";
-	      }
-	      if(zoomLevel > 11) {
-	    	  sql += ", \"tertiary\"";
-	      }
-	      if(zoomLevel > 12) {
-	    	  sql += ", \"path\"";
-	      }
-	      if(zoomLevel > 13) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 14) {
-	    	  sql += ", \"gymnastics\"";
-	      }
-	      if(zoomLevel > 15) {
-	    	  sql += ", \"miniature_golf\"";
-	      }
-	      if(zoomLevel > 16) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 17) {
-	    	  sql += ", \"\"";
-	      }
-	      if(zoomLevel > 18) {
-	    	  sql += ", \"\"";
-	      }
-	      sql += ") ORDER BY WAY.ID";
-	      sql = sql.replace("\"\",", "");
-	      sql = sql.replace(", \"\"", "");
-	      try {
+
+		List<Way> ways = getWays();
+	    m.setWays(ways);
+	    return m;
+	}
+	
+	public static List<Way> getWays() {
+		String sql = "SELECT * FROM WAY";
+		List<Way> ways = new ArrayList<Way>();
+		try {
 	    	   Class.forName("org.sqlite.JDBC");
 	    	   Connection conn = ConnectionSingleton.getInstance().getConnection();
 	           Statement stmt  = conn.createStatement();
 	           ResultSet rs    = stmt.executeQuery(sql);
-	          
-	           int previousWayId = -1;
-	           String previousType1 = "";
-	           String previousType2 = "";
-	           List<Double> currentWayNodeIds = new ArrayList<Double>();
-	          // loop through the result set
+
 	          while (rs.next()) {
-	        	  int nodeId = rs.getInt("ID");
-	        	  if(nodeId == 371745135) {
-	        		  System.out.println("aa");
-	        	  }
-	        	  Node n = new Node(new Double(nodeId), rs.getDouble("LAT"), rs.getDouble("LON"));
-	              resultNodes.add(n);
-	              currentWayNodeIds.add(new Double(nodeId));
-	              int currentWayId = rs.getInt("WAY");
-	              
-	              if(previousWayId == -1) {
-	            	  previousType1 = rs.getString("TYPE1");
-	            	  previousType2 = rs.getString("TYPE2");
-	              }
-	              
-	              if(previousWayId == -1 || previousWayId != currentWayId) {
-	            	  Way w = new Way(new Double(previousWayId), previousType1, previousType2);
-	            	  w.setNodes(currentWayNodeIds);
-	            	  resultWays.add(w);
-	            	  currentWayNodeIds = new ArrayList<Double>();
-	            	  previousWayId = currentWayId;
-	            	  previousType1 = rs.getString("TYPE1");
-	            	  previousType2 = rs.getString("TYPE2");
-	              }
-	              
+	        	  Double id = rs.getDouble("ID");
+	        	  Double usedBy = rs.getDouble("RELATION");
+	        	  List<Node> nodes = getNodesFromWayId(id);
+	        	  List<Tag> tags = getTagsFromWayId(id);
+	        	  Way currentWay = new Way(id, usedBy, nodes, tags);
+	        	  ways.add(currentWay);
 	          }
-	          
-	          stmt.close();
-	          
-	          m.setNodes(resultNodes);
-	          m.setWays(resultWays);
-	      } 
-	      catch (Exception e) {
-	          System.out.println(e.getMessage());
-	      }
-	      
-	      return m;
-	  }
+	    } catch (Exception e) {
+          System.out.println(e.getMessage());
+	    }
+		return ways;
+	}
+	
+	public static List<Node> getNodesFromWayId(Double wayId) {
+		DecimalFormat df = new DecimalFormat("#");
+		df.setMaximumFractionDigits(0);
+		String sql = "SELECT * FROM NODE WHERE WAY = " + df.format(wayId);
+		List<Node> nodes = new ArrayList<Node>();
+		try {
+	    	   Class.forName("org.sqlite.JDBC");
+	    	   Connection conn = ConnectionSingleton.getInstance().getConnection();
+	           Statement stmt  = conn.createStatement();
+	           ResultSet rs    = stmt.executeQuery(sql);
+
+	          while (rs.next()) {
+	        	  Node currentNode = new Node(rs.getDouble("ID"), rs.getDouble("LAT"), rs.getDouble("LON"));
+	        	  nodes.add(currentNode);
+	          }
+	    } catch (Exception e) {
+       System.out.println(e.getMessage());
+	    }
+		return nodes;
+	}
+	
+	public static List<Tag> getTagsFromWayId(Double wayId) {
+		DecimalFormat df = new DecimalFormat("#");
+		df.setMaximumFractionDigits(0);
+		String sql = "SELECT * FROM TAG WHERE USED_BY = " + df.format(wayId);
+		List<Tag> tags = new ArrayList<Tag>();
+		try {
+	    	   Class.forName("org.sqlite.JDBC");
+	    	   Connection conn = ConnectionSingleton.getInstance().getConnection();
+	           Statement stmt  = conn.createStatement();
+	           ResultSet rs    = stmt.executeQuery(sql);
+
+	          while (rs.next()) {
+	        	  Tag currentNode = new Tag(rs.getDouble("ID"), rs.getDouble("USED_BY"), rs.getString("TYPE1"), rs.getString("TYPE2"));
+	        	  tags.add(currentNode);
+	          }
+	    } catch (Exception e) {
+       System.out.println(e.getMessage());
+	    }
+		return tags;
+	}
 	
 	/*public static List<Node> getWaysById(List<Integer> ids)
 	  {

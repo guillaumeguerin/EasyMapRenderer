@@ -23,6 +23,9 @@ public class XMLParserFacade {
 		else if(text.trim().startsWith("<node") && !way) {
 			o = NodeParser.parse(text);
 		}
+		else if(text.trim().startsWith("<relation") && !way) {
+			o = RelationParser.parse(text);
+		}
 		else if(text.trim().startsWith("<way")) {
 			way = true;
 			wayText += text;
