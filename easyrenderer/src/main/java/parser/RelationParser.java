@@ -3,6 +3,7 @@ package parser;
 import java.util.ArrayList;
 
 import exceptions.ParseException;
+import model.Member;
 import model.Relation;
 import model.Tag;
 import model.Way;
@@ -44,6 +45,13 @@ public class RelationParser {
 					String type1 = line[1].split("=")[1].replace("'", "");
 					String type2 = line[2].split("=")[1].replace("'", "");
 					myRelation.addTag(new Tag(1., 1., type1, type2));
+				}
+			}
+			else if(tags[i].contains("member")) {
+				if(line.length > 2 && line[1].split("=").length > 0 && line[2].split("=")[1].length() > 0) {
+					String wayId = line[2].split("=")[1].replace("'", "");
+					myRelation.addWay(Double.parseDouble(wayId));
+					myRelation.addMember(new Member(1., Double.parseDouble(wayId), line[3].split("=")[1].replace("'", "")));
 				}
 			}
 			//System.out.println(tags[i]);

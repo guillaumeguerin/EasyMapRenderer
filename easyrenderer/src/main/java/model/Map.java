@@ -10,6 +10,7 @@ public class Map {
 	Node maxNode;
 	HashMap<Integer, Node> nodes;
 	List<Way> ways;
+	List<Relation> relations;
 	
 	public HashMap<Integer, Node> getNodes() {
 		return nodes;
@@ -17,6 +18,10 @@ public class Map {
 	
 	public List<Way> getWays() {
 		return ways;
+	}
+	
+	public List<Relation> getRelations() {
+		return relations;
 	}
 	
 	public void setMinNode(Node n) {
@@ -57,9 +62,14 @@ public class Map {
 		ways = w;
 	}
 	
-	public Map(List<Node> n, List<Way> w) {
+	public void setRelations(List<Relation> r) {
+		relations = r;
+	}
+	
+	public Map(List<Node> n, List<Way> w, List<Relation> r) {
 		setNodes(n);
 		setWays(w);
+		setRelations(r);
 		setMinNode(computeMinNode(n));
 		setMaxNode(computeMaxNode(n));
 	}

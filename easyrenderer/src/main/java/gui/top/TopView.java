@@ -38,9 +38,11 @@ public class TopView extends HBox {
         	fileChooser.setTitle("Open Resource File");
         	fileChooser.getExtensionFilters().addAll(new ExtensionFilter("OpenStreetMap data", "*.osm"));
         	File chosenFile = fileChooser.showOpenDialog(primaryStage);
-        	dialogPath.setText(chosenFile.getAbsolutePath());
-        	if(chosenFile.getAbsolutePath().endsWith(".osm")) {
-        		FileParser.readFile(chosenFile.getAbsolutePath());
+        	if(chosenFile != null) {
+            	dialogPath.setText(chosenFile.getAbsolutePath());
+            	if(chosenFile.getAbsolutePath().endsWith(".osm")) {
+            		FileParser.readFile(chosenFile.getAbsolutePath());
+            	}
         	}
          });
         

@@ -40,10 +40,13 @@ public class MapOutputView extends VBox{
         
         ChoiceBox languageListView = new ChoiceBox(FXCollections.observableArrayList("English", "French"));
         
+        ChoiceBox backgroundListView = new ChoiceBox(FXCollections.observableArrayList("White", "Black", "Blue", "Green"));
+        
         zoomListView.getSelectionModel().selectFirst();
         cssListView.getSelectionModel().selectFirst();
         outputListView.getSelectionModel().selectFirst();
         languageListView.getSelectionModel().selectFirst();
+        backgroundListView.getSelectionModel().selectFirst();
         
         this.getChildren().add(new Label("Zoom"));
         this.getChildren().add(zoomListView);
@@ -53,6 +56,8 @@ public class MapOutputView extends VBox{
         this.getChildren().add(outputListView);
         this.getChildren().add(new Label("Language"));
         this.getChildren().add(languageListView);
+        this.getChildren().add(new Label("Background"));
+        this.getChildren().add(backgroundListView);
 
 	}
 	

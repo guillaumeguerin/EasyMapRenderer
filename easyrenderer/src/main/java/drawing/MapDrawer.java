@@ -14,7 +14,9 @@ import javax.imageio.ImageIO;
 import exceptions.DrawingException;
 import model.Map;
 import model.MapParameters;
+import model.Member;
 import model.Node;
+import model.Relation;
 import model.Tag;
 import model.Way;
 
@@ -29,8 +31,13 @@ public class MapDrawer {
             // into integer pixels
             BufferedImage bi = new BufferedImage(Tile.width, Tile.height, BufferedImage.TYPE_INT_ARGB);
             List<Way> ways = m.getWays();
+            List<Relation> relations = m.getRelations();
+            
+            ways = addRelationTagsToWay(ways, relations);
+            
             Graphics2D image = bi.createGraphics();
-            image.setColor(new Color(112, 183, 224));
+            //image.setColor(new Color(112, 183, 224));
+            image.setColor(new Color(10, 10, 50));
             image.fillRect(0, 0, Tile.width, Tile.height);
             
             Boolean foobar = false;
@@ -281,5 +288,77 @@ public class MapDrawer {
 	}
 	public static Color getWoodColor() {
 		return new Color(78, 114, 75);
+	}
+	
+	/**
+	 * Adds relation tags to inner ways
+	 * 
+	 * @param ways
+	 * @param relations
+	 * @return
+	 */
+	public static List<Way> addRelationTagsToWay(List<Way> ways, List<Relation> relations) {
+		for(int i=0; i<relations.size(); i++) {
+			Relation currentRelation = relations.get(i);
+			List<Member> members = currentRelation.getMembers();
+			
+			for(int j=0; j<members.size(); j++) {
+				Member currentMember = members.get(j);
+				if(currentMember.getRole().equals("outer")) {
+					Double wayId = currentMember.getUsedBy();
+					
+					for(int k=0; k<ways.size(); k++) {
+						if(ways.get(k).getId().equals(wayId)) {
+							ways.get(k).addTags(currentRelation.getTags());
+						}
+					}
+				}
+			}
+		}
+		
+		
+		
+        /*for(int i=0; i<ways.size(); i++) {
+        	if(ways.get(i).getUsedBy() != null && !ways.get(i).getUsedBy().equals(0.)) {
+        		List<Tag> tags = findWayTagsFromRelation(relations, ways.get(i));
+        		if(tags.size() > 0) {
+        			ways.get(i).addTags(tags);
+        		}
+        	}
+        }*/
+        return ways;
+	}
+	
+	
+	private static List<Tag> findWayTagsFromRelation(List<Relation> relations, Way w) {
+		List<Tag> tags = new ArrayList<Tag>();
+		List<Relation> matchingRelations = findMatchingRelationsFromWay(relations, w);
+		if(matchingRelations != null && matchingRelations.size() > 0) {
+			for(Relation r : matchingRelations) {
+				if(r.getRelationOuterWay().equals(w.getId())) {
+					tags.addAll(r.getTags());
+				}
+			}
+		}
+		return tags;
+	}
+	
+	public static List<Relation> findMatchingRelationsFromWay(List<Relation> relations, Way w) {
+		List<Relation> matchingRelations = new ArrayList<>();
+		for(int j=0; j<relations.size(); j++) {
+			Relation currentRelation = relations.get(j);
+			List<Member> relationMembers = currentRelation.getMembers();
+			for(int k=0; k<relationMembers.size(); k++) {
+				Member currentMember = relationMembers.get(k);
+				if(currentMember.getUsedBy().equals(w.getUsedBy())) {
+					matchingRelations.add(currentRelation);
+				}
+			}
+		}
+		return matchingRelations;
+	}
+
+	public static boolean isRelationInnerWay(Relation r) {
+		return false;
 	}
 }

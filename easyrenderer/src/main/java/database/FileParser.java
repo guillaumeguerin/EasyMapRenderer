@@ -10,6 +10,7 @@ import java.util.List;
 import exceptions.DrawingException;
 import exceptions.ParseException;
 import model.Map;
+import model.Member;
 import model.Node;
 import model.Relation;
 import model.Tag;
@@ -34,11 +35,18 @@ public class FileParser {
 			else if(osmList.get(i) instanceof Tag) {
 				SQLiteJDBC.insertTag((Tag) osmList.get(i));
 			}
+			else if(osmList.get(i) instanceof Member) {
+				SQLiteJDBC.insertMember((Member) osmList.get(i));
+			}
+			
 		}
 		
 		for(int i=0; i< osmList.size(); i++) {
 			if(osmList.get(i) instanceof Way) {
 				SQLiteJDBC.updateAllNodes((Way) osmList.get(i));
+			}
+			if(osmList.get(i) instanceof Relation) {
+				SQLiteJDBC.updateWays((Relation) osmList.get(i));
 			}
 		}
     }
@@ -52,6 +60,7 @@ public class FileParser {
 			//br = new BufferedReader(new FileReader(FILENAME));
 			fr = new FileReader(filePath);
 			br = new BufferedReader(fr);
+			int lineNumber = 0;
 
 			String sCurrentLine;
 			List<Object> osmList = new ArrayList<Object>();
@@ -65,6 +74,7 @@ public class FileParser {
 				if(!o.equals(new Object())) {
 					osmList.add(o);
 				}
+				lineNumber += 1;
 			}
 			if(!SQLiteJDBC.tableExists("NODE") && !SQLiteJDBC.tableExists("WAY")
 					&& !SQLiteJDBC.tableExists("RELATION")

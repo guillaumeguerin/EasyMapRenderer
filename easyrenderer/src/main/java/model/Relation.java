@@ -8,6 +8,7 @@ public class Relation implements Element {
 	Double id;
 	List<Double> ways;
 	List<Tag> tags;
+	List<Member> members;
 	
 	public Double getId() {
 		return id;
@@ -21,6 +22,10 @@ public class Relation implements Element {
 		return tags;
 	}
 	
+	public List<Member> getMembers() {
+		return members;
+	}
+	
 	public void setId(Double d) {
 		id = d;
 	}
@@ -30,6 +35,9 @@ public class Relation implements Element {
 	}
 	
 	public void addWay(Double w) {
+		if(ways == null) {
+			ways = new ArrayList<Double>();
+		}
 		ways.add(w);
 	}
 	
@@ -37,7 +45,14 @@ public class Relation implements Element {
 		tags = t;
 	}
 	
+	public void setMembers(List<Member> m) {
+		members = m;
+	}
+	
 	public void addTag(Tag t) {
+		if(tags == null) {
+			tags = new ArrayList<Tag>();
+		}
 		tags.add(t);
 	}
 	
@@ -106,13 +121,39 @@ public class Relation implements Element {
 		}
 	}*/
 	
-	public Relation(Double myId, List<Double> waysId, List<Tag> tags) {
+	public Relation(Double myId, List<Double> waysId, List<Tag> tags, List<Member> members) {
 		setId(myId);
 		setWays(ways);
 		setTags(tags);
+		setMembers(members);
 	}
 
 	public Relation() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public void addMember(Member member) {
+		if(members == null) {
+			members = new ArrayList<Member>();
+		}
+		members.add(member);
+	}
+	
+	public Double getRelationInnerWay() {
+		for(int i=0; i<members.size(); i++) {
+			if(members.get(i).getRole().equals("inner")) {
+				return members.get(i).getUsedBy();
+			}
+		}
+		return 0.;
+	}
+	
+	public Double getRelationOuterWay() {
+		for(int i=0; i<members.size(); i++) {
+			if(members.get(i).getRole().equals("outer")) {
+				return members.get(i).getUsedBy();
+			}
+		}
+		return 0.;
 	}
 }

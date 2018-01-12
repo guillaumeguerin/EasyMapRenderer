@@ -50,6 +50,10 @@ public class Way implements Element {
 		tags.add(t);
 	}
 	
+	public void addTags(List<Tag> t) {
+		tags.addAll(t);
+	}
+	
 	public Way(String l) {
 		setNodes(new ArrayList<Node>());
 		String[] tags = l.split("<");

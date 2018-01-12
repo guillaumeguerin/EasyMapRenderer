@@ -10,6 +10,7 @@ import model.Node;
 import model.Relation;
 import model.Tag;
 import model.Map;
+import model.Member;
 import model.Way;
 
 public class SQLiteJDBC {
@@ -47,6 +48,13 @@ public class SQLiteJDBC {
                  " USED_BY DOUBLE," +
                  " TYPE1          TEXT, " + 
                  " TYPE2          TEXT)";
+         stmt.executeUpdate(sql);
+         
+         sql = "CREATE TABLE MEMBER " +
+                 "(ID DOUBLE PRIMARY KEY     NOT NULL," +
+                 " USED_BY DOUBLE," +
+                 " RELATION DOUBLE," +
+                 " ROLE          TEXT)";
          stmt.executeUpdate(sql);
          
          stmt.close();
@@ -135,7 +143,11 @@ public class SQLiteJDBC {
             	insertTag(t, relation.getId());
             }
         }
-        
+        if(relation.getMembers() != null) {
+        	for(Member m : relation.getMembers()) {
+            	insertMember(m, relation);
+            }
+        }
 	}
 	
 	public static void insertTag(Tag tag) {
@@ -165,6 +177,39 @@ public class SQLiteJDBC {
             pstmt.setDouble(2, usedId);
             pstmt.setString(3, tag.getType1());
             pstmt.setString(4, tag.getType2());
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+	}
+	
+	public static void insertMember(Member member) {
+		String sql = "INSERT INTO MEMBER(ID, USED_BY, ROLE) VALUES(?,?,?)";
+		 
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setDouble(1, SequenceSingleton.getInstance().getId().intValue());
+            pstmt.setDouble(2, member.getUsedBy());
+            pstmt.setString(3, member.getRole());
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+	}
+	
+	public static void insertMember(Member member, Relation relation) {
+		String sql = "INSERT INTO MEMBER(ID, USED_BY, RELATION, ROLE) VALUES(?,?,?,?)";
+		 
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setDouble(1, SequenceSingleton.getInstance().getId().intValue());
+            pstmt.setDouble(2, member.getUsedBy());
+            pstmt.setDouble(3, relation.getId());
+            pstmt.setString(4, member.getRole());
             pstmt.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -201,6 +246,12 @@ public class SQLiteJDBC {
         }
 	}
 	
+	public static void updateWays(Relation r) {
+		for(int i=0; i<r.getWays().size(); i++) {
+			updateWay(r, r.getWays().get(i));
+		}
+	}
+	
 	public static void updateTag(Double itemId, Double tagId) {
 		String sql = "UPDATE TAG SET USED_BY = ? WHERE ID = ?";
 		 
@@ -210,6 +261,21 @@ public class SQLiteJDBC {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setDouble(1, itemId);
             pstmt.setDouble(2, tagId);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+	}
+	
+	public static void updateMember(Double itemId, Double memberId) {
+		String sql = "UPDATE MEMBER SET USED_BY = ? WHERE ID = ?";
+		 
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setDouble(1, itemId);
+            pstmt.setDouble(2, memberId);
             pstmt.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -228,17 +294,42 @@ public class SQLiteJDBC {
 	
 	public static Map retrieveMapFromDB(Double minLat, Double maxLat, Double minLon, Double maxLon, int zoomLevel)
 	  {
-		List<Node> resultNodes = new ArrayList<Node>();
-		List<Way> resultWays = new ArrayList<Way>();
 		Map m = new Map();
 
 		List<Way> ways = getWays();
 	    m.setWays(ways);
+	    List<Relation> relations = getRelations();
+	    m.setRelations(relations);
 	    return m;
 	}
 	
 	public static List<Way> getWays() {
 		String sql = "SELECT * FROM WAY";
+		List<Way> ways = new ArrayList<Way>();
+		try {
+	    	   Class.forName("org.sqlite.JDBC");
+	    	   Connection conn = ConnectionSingleton.getInstance().getConnection();
+	           Statement stmt  = conn.createStatement();
+	           ResultSet rs    = stmt.executeQuery(sql);
+
+	          while (rs.next()) {
+	        	  Double id = rs.getDouble("ID");
+	        	  Double usedBy = rs.getDouble("RELATION");
+	        	  List<Node> nodes = getNodesFromWayId(id);
+	        	  List<Tag> tags = getTagsFromWayId(id);
+	        	  Way currentWay = new Way(id, usedBy, nodes, tags);
+	        	  ways.add(currentWay);
+	          }
+	    } catch (Exception e) {
+          System.out.println(e.getMessage());
+	    }
+		return ways;
+	}
+	
+	public static List<Way> getWaysFromRelationId(Double relationId) {
+		DecimalFormat df = new DecimalFormat("#");
+		df.setMaximumFractionDigits(0);
+		String sql = "SELECT * FROM WAY WHERE RELATION = " + df.format(relationId);
 		List<Way> ways = new ArrayList<Way>();
 		try {
 	    	   Class.forName("org.sqlite.JDBC");
@@ -293,13 +384,83 @@ public class SQLiteJDBC {
 	           ResultSet rs    = stmt.executeQuery(sql);
 
 	          while (rs.next()) {
-	        	  Tag currentNode = new Tag(rs.getDouble("ID"), rs.getDouble("USED_BY"), rs.getString("TYPE1"), rs.getString("TYPE2"));
-	        	  tags.add(currentNode);
+	        	  Tag currentTag = new Tag(rs.getDouble("ID"), rs.getDouble("USED_BY"), rs.getString("TYPE1"), rs.getString("TYPE2"));
+	        	  tags.add(currentTag);
 	          }
 	    } catch (Exception e) {
        System.out.println(e.getMessage());
 	    }
 		return tags;
+	}
+	
+	public static List<Member> getMembersFromWayId(Double wayId) {
+		DecimalFormat df = new DecimalFormat("#");
+		df.setMaximumFractionDigits(0);
+		String sql = "SELECT * FROM MEMBER WHERE USED_BY = " + df.format(wayId);
+		List<Member> members = new ArrayList<Member>();
+		try {
+	    	   Class.forName("org.sqlite.JDBC");
+	    	   Connection conn = ConnectionSingleton.getInstance().getConnection();
+	           Statement stmt  = conn.createStatement();
+	           ResultSet rs    = stmt.executeQuery(sql);
+
+	          while (rs.next()) {
+	        	  Member currentMember = new Member(rs.getDouble("ID"), rs.getDouble("USED_BY"), rs.getDouble("RELATION"), rs.getString("ROLE"));
+	        	  members.add(currentMember);
+	          }
+	    } catch (Exception e) {
+       System.out.println(e.getMessage());
+	    }
+		return members;
+	}
+	
+	public static List<Member> getMembersFromRelationId(Double relationId) {
+		DecimalFormat df = new DecimalFormat("#");
+		df.setMaximumFractionDigits(0);
+		String sql = "SELECT * FROM MEMBER WHERE RELATION = " + df.format(relationId);
+		List<Member> members = new ArrayList<Member>();
+		try {
+	    	   Class.forName("org.sqlite.JDBC");
+	    	   Connection conn = ConnectionSingleton.getInstance().getConnection();
+	           Statement stmt  = conn.createStatement();
+	           ResultSet rs    = stmt.executeQuery(sql);
+
+	          while (rs.next()) {
+	        	  Member currentMember = new Member(rs.getDouble("ID"), rs.getDouble("USED_BY"), rs.getDouble("RELATION"), rs.getString("ROLE"));
+	        	  members.add(currentMember);
+	          }
+	    } catch (Exception e) {
+       System.out.println(e.getMessage());
+	    }
+		return members;
+	}
+	
+	public static List<Relation> getRelations() {
+		String sql = "SELECT * FROM RELATION";
+		List<Relation> relations = new ArrayList<Relation>();
+		try {
+	    	   Class.forName("org.sqlite.JDBC");
+	    	   Connection conn = ConnectionSingleton.getInstance().getConnection();
+	           Statement stmt  = conn.createStatement();
+	           ResultSet rs    = stmt.executeQuery(sql);
+
+	          while (rs.next()) {
+	        	  Double id = rs.getDouble("ID");
+	        	  List<Tag> tags = getTagsFromWayId(id);
+	        	  List<Way> ways = getWaysFromRelationId(id);
+	        	  List<Double> wayIds = new ArrayList<Double>();
+	        	  List<Member> members = new ArrayList<Member>();
+	        	  members.addAll(getMembersFromRelationId(id));
+	        	  for(int i=0; i<ways.size(); i++) {
+	        		  wayIds.add(ways.get(i).getId());
+	        	  }
+	        	  Relation currentRelation = new Relation(id, null, tags, members);
+	        	  relations.add(currentRelation);
+	          }
+	    } catch (Exception e) {
+          System.out.println(e.getMessage());
+	    }
+		return relations;
 	}
 	
 	/*public static List<Node> getWaysById(List<Integer> ids)
