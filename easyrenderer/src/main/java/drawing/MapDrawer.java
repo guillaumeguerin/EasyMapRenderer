@@ -2,6 +2,7 @@ package drawing;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class MapDrawer {
             List<Relation> relations = m.getRelations();
             
             ways = addRelationTagsToWay(ways, relations);
+            ways = reOrderWays(ways);
             
             Graphics2D image = bi.createGraphics();
             //image.setColor(new Color(112, 183, 224));
@@ -52,35 +54,9 @@ public class MapDrawer {
             	
             	int[] xPoints = new int[idNodesList.size()];
             	int[] yPoints = new int[idNodesList.size()];
-            	
-            	List<Node> nodesFound = new ArrayList<Node>();
-            	for(int j=0; j<idNodesList.size(); j++) {
-            		Node currentNode = idNodesList.get(j);
-            		nodesFound.add(currentNode);
-            	}
-            	if(nodesFound != null && nodesFound.size() > 0) {
-            		nodesFound = Drawing.sortNodes(nodesFound);
-            	}
-            	for(int j=0; j<nodesFound.size(); j++) {
-            		Node currentNode = nodesFound.get(j);
-            		Double xPos = (currentNode.getLat() - m.getMinNode().getLat()) / m.getLatScale() * Tile.width;
-            		Double yPos = (currentNode.getLon() - m.getMinNode().getLon()) / m.getLonScale() * Tile.height;
-            		
-            		if(xPos.intValue() > Tile.width) {
-            			throw new DrawingException("Cannot draw item at x pos: " + xPos.intValue() + " as it is > to width: " + Tile.width);
-            		}
-            		if(yPos.intValue() > Tile.height) {
-            			throw new DrawingException("Cannot draw item at y pos: " + yPos.intValue() + " as it is > to height: " + Tile.height);
-            		}
-            		
-            		xPoints[j] = xPos.intValue();
-            		yPoints[j] = yPos.intValue();
-            		
-            		if(nodesFound.get(j).getId().equals(new Double(371746006))) {
-            			foobar = true;
-            		}
-            		
-            	}
+            	List<int[]> xyPoints = computeNodePosition(m, idNodesList);
+            	xPoints = xyPoints.get(0);
+            	yPoints = xyPoints.get(1);
             	
             	if(wayMachesType(ways.get(i), mapParameters, "Amenity")) {
             		image.setColor(getAmenityColor());
@@ -191,10 +167,10 @@ public class MapDrawer {
             ig2.setPaint(Color.black);
             ig2.drawString(message, (width - stringWidth) / 2, height / 2 + stringHeight / 4);*/
 
-            ImageIO.write(bi, "PNG", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\yourImageName.PNG"));
-            ImageIO.write(bi, "JPEG", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\yourImageName.JPG"));
-            ImageIO.write(bi, "gif", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\yourImageName.GIF"));
-            ImageIO.write(bi, "BMP", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\yourImageName.BMP"));
+            ImageIO.write(bi, "PNG", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\map.PNG"));
+            ImageIO.write(bi, "JPEG", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\map.JPG"));
+            ImageIO.write(bi, "gif", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\map.GIF"));
+            ImageIO.write(bi, "BMP", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\map.BMP"));
             
           } catch (IOException ie) {
             ie.printStackTrace();
@@ -315,50 +291,109 @@ public class MapDrawer {
 				}
 			}
 		}
-		
-		
-		
-        /*for(int i=0; i<ways.size(); i++) {
-        	if(ways.get(i).getUsedBy() != null && !ways.get(i).getUsedBy().equals(0.)) {
-        		List<Tag> tags = findWayTagsFromRelation(relations, ways.get(i));
-        		if(tags.size() > 0) {
-        			ways.get(i).addTags(tags);
-        		}
-        	}
-        }*/
+
         return ways;
 	}
 	
-	
-	private static List<Tag> findWayTagsFromRelation(List<Relation> relations, Way w) {
-		List<Tag> tags = new ArrayList<Tag>();
-		List<Relation> matchingRelations = findMatchingRelationsFromWay(relations, w);
-		if(matchingRelations != null && matchingRelations.size() > 0) {
-			for(Relation r : matchingRelations) {
-				if(r.getRelationOuterWay().equals(w.getId())) {
-					tags.addAll(r.getTags());
-				}
-			}
-		}
-		return tags;
-	}
-	
-	public static List<Relation> findMatchingRelationsFromWay(List<Relation> relations, Way w) {
-		List<Relation> matchingRelations = new ArrayList<>();
-		for(int j=0; j<relations.size(); j++) {
-			Relation currentRelation = relations.get(j);
-			List<Member> relationMembers = currentRelation.getMembers();
-			for(int k=0; k<relationMembers.size(); k++) {
-				Member currentMember = relationMembers.get(k);
-				if(currentMember.getUsedBy().equals(w.getUsedBy())) {
-					matchingRelations.add(currentRelation);
-				}
-			}
-		}
-		return matchingRelations;
-	}
-
 	public static boolean isRelationInnerWay(Relation r) {
 		return false;
+	}
+	
+	/**
+	 * Compute the nodes position
+	 * @return
+	 * @throws DrawingException 
+	 */
+	public static List<int[]> computeNodePosition(Map m, List<Node> idNodesList) throws DrawingException {
+		int[] xPoints = new int[idNodesList.size()];
+    	int[] yPoints = new int[idNodesList.size()];
+    	
+    	List<Node> nodesFound = new ArrayList<Node>();
+    	for(int j=0; j<idNodesList.size(); j++) {
+    		Node currentNode = idNodesList.get(j);
+    		nodesFound.add(currentNode);
+    	}
+    	if(nodesFound != null && nodesFound.size() > 0) {
+    		nodesFound = Drawing.sortNodes(nodesFound);
+    	}
+    	for(int j=0; j<nodesFound.size(); j++) {
+    		Node currentNode = nodesFound.get(j);
+    		/*Double xPos = (currentNode.getLat() - m.getMinNode().getLat()) / m.getLatScale() * Tile.width;
+    		Double yPos = (currentNode.getLon() - m.getMinNode().getLon()) / m.getLonScale() * Tile.height;*/
+    		
+    		/*Double xPos = (m.getMinNode().getLat() - currentNode.getLat()) / m.getLatScale() * Tile.width;
+    		Double yPos = (m.getMinNode().getLon() - currentNode.getLon()) / m.getLonScale() * Tile.height;*/
+    		
+    		/*Double xPos = (currentNode.getLat() - m.getMaxNode().getLat()) / m.getLatScale() * Tile.width;
+    		Double yPos = (currentNode.getLon() - m.getMaxNode().getLon()) / m.getLonScale() * Tile.height;*/
+    		
+    		/*Double xPos = (m.getMaxNode().getLat() - currentNode.getLat()) / m.getLatScale() * Tile.width;
+    		Double yPos = (m.getMaxNode().getLon() - currentNode.getLon()) / m.getLonScale() * Tile.height;*/
+    		
+    		Double xPos = (m.getMaxNode().getLat() - currentNode.getLat()) / m.getLatScale() * Tile.width;
+    		Double yPos = (m.getMaxNode().getLon() - currentNode.getLon()) / m.getLonScale() * Tile.height;
+    		yPos -= Tile.height;
+    		yPos = Math.abs(yPos);
+    		
+    		double[] pt = {xPos, yPos};
+    		AffineTransform.getRotateInstance(Math.toRadians(90), 0, 0)
+    		  .transform(pt, 0, pt, 0, 1); // specifying to use this double[] to hold coords
+    		xPos = pt[0];
+    		yPos = pt[1];
+    		xPos = Math.abs(xPos);
+    		yPos = Math.abs(yPos);
+    		
+    		if(xPos.intValue() > Tile.width) {
+    			throw new DrawingException("Cannot draw item at x pos: " + xPos.intValue() + " as it is > to width: " + Tile.width);
+    		}
+    		if(yPos.intValue() > Tile.height) {
+    			throw new DrawingException("Cannot draw item at y pos: " + yPos.intValue() + " as it is > to height: " + Tile.height);
+    		}
+    		
+    		xPoints[j] = xPos.intValue();
+    		yPoints[j] = yPos.intValue();
+    		
+    		if(currentNode.getId().equals(new Double(4217017613.))) {
+    			System.out.println("");
+    		}
+    		
+    	}
+    	
+    	if(xPoints.length >= 3 && xPoints.length <= 6) {
+	    	List<java.awt.Point> points = new ArrayList<>();
+	    	for(int i=0; i<xPoints.length; i++) {
+	    		points.add(new java.awt.Point(xPoints[i],yPoints[i]));
+	    	}
+	    	List<java.awt.Point> convexHull = GrahamScan.getConvexHull(points);
+	    	
+	    	for(int i=0; i<xPoints.length; i++) {
+	    		if(i < convexHull.size()) {
+	    			xPoints[i] = convexHull.get(i).x;
+		    		yPoints[i] = convexHull.get(i).y;
+	    		}
+	    	}
+    	}
+    	
+    	List<int[]> xyPoints = new ArrayList<>();
+    	xyPoints.add(xPoints);
+    	xyPoints.add(yPoints);
+    	return xyPoints;
+	}
+	
+	public static List<Way> reOrderWays(List<Way> ways) {
+		List<Way> waterResult = new ArrayList<>();
+		List<Way> otherResult = new ArrayList<>();
+		
+		for(int i=0;i<ways.size(); i++) {
+			if(ways.get(i).hasSpecificTag("water")) {
+				waterResult.add(ways.get(i));
+			}
+			else {
+				otherResult.add(ways.get(i));
+			}
+		}
+		waterResult.addAll(otherResult);
+		
+		return waterResult;
 	}
 }

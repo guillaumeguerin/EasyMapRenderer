@@ -54,6 +54,16 @@ public class Way implements Element {
 		tags.addAll(t);
 	}
 	
+	public boolean hasSpecificTag(String type) {
+		type = type.toLowerCase();
+		for(int i=0; i<tags.size(); i++) {
+			if(type.equals(tags.get(i).type1.toLowerCase()) || type.equals(tags.get(i).type2.toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public Way(String l) {
 		setNodes(new ArrayList<Node>());
 		String[] tags = l.split("<");
