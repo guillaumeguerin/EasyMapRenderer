@@ -333,10 +333,18 @@ public class MapDrawer {
     		yPos = Math.abs(yPos);
     		
     		if(xPos.intValue() > Tile.width) {
-    			xPos = (double) 0;
+    			xPos = (double) Tile.width;
     			//throw new DrawingException("Cannot draw item at x pos: " + xPos.intValue() + " as it is > to width: " + Tile.width);
     		}
     		if(yPos.intValue() > Tile.height) {
+    			yPos = (double) Tile.height;
+    			//throw new DrawingException("Cannot draw item at y pos: " + yPos.intValue() + " as it is > to height: " + Tile.height);
+    		}
+    		if(xPos.intValue() < 0) {
+    			xPos = (double) 0;
+    			//throw new DrawingException("Cannot draw item at x pos: " + xPos.intValue() + " as it is > to width: " + Tile.width);
+    		}
+    		if(yPos.intValue() < 0) {
     			yPos = (double) 0;
     			//throw new DrawingException("Cannot draw item at y pos: " + yPos.intValue() + " as it is > to height: " + Tile.height);
     		}

@@ -11,12 +11,12 @@ public class BottomView extends HBox {
 	public BottomView() {
 		this.setSpacing(10);
 		
-        Button startServerButton = new Button("Start server");
+        /*Button startServerButton = new Button("Start server");
         startServerButton.setOnAction(value -> {
         	
         });
 		
-        this.getChildren().add(startServerButton);
+        this.getChildren().add(startServerButton);*/
 		
 		
 		//The button uses an inner class to handle the button click event
