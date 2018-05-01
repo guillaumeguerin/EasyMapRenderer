@@ -56,7 +56,7 @@ public class AppGui {
         componentLayout.setBottom(new BottomView());
         
         //Add the BorderPane to the Scene
-        Scene appScene = new Scene(componentLayout,700,400);
+        Scene appScene = new Scene(componentLayout,700,500);
         
         //Add the Scene to the Stage
         primaryStage.setScene(appScene);

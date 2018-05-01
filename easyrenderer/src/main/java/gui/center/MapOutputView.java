@@ -4,14 +4,20 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 public class MapOutputView extends VBox{
 
+	public static String MIN_NODE = "";
+	public static String MAX_NODE = "";
+	public static String BACKGROUND_COLOR = "";
 		
 	public MapOutputView() {
 		super();
@@ -41,12 +47,27 @@ public class MapOutputView extends VBox{
         ChoiceBox languageListView = new ChoiceBox(FXCollections.observableArrayList("English", "French"));
         
         ChoiceBox backgroundListView = new ChoiceBox(FXCollections.observableArrayList("White", "Black", "Blue", "Green"));
+        backgroundListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
+              BACKGROUND_COLOR = backgroundListView.getItems().get((Integer) number2).toString();
+            }
+          });
         
         zoomListView.getSelectionModel().selectFirst();
         cssListView.getSelectionModel().selectFirst();
         outputListView.getSelectionModel().selectFirst();
         languageListView.getSelectionModel().selectFirst();
         backgroundListView.getSelectionModel().selectFirst();
+        
+        TextField dialogMinNode = new TextField ();
+        dialogMinNode.textProperty().addListener((observable, oldValue, newValue) -> {
+        	MIN_NODE = newValue;
+        });
+        
+        TextField dialogMaxNode = new TextField ();
+        dialogMaxNode.textProperty().addListener((observable, oldValue, newValue) -> {
+        	MAX_NODE = newValue;
+        });
         
         this.getChildren().add(new Label("Zoom"));
         this.getChildren().add(zoomListView);
@@ -58,7 +79,10 @@ public class MapOutputView extends VBox{
         this.getChildren().add(languageListView);
         this.getChildren().add(new Label("Background"));
         this.getChildren().add(backgroundListView);
-
+        this.getChildren().add(new Label("Min node"));
+        this.getChildren().add(dialogMinNode);
+        this.getChildren().add(new Label("Max node"));
+        this.getChildren().add(dialogMaxNode);
 	}
 	
 }

@@ -183,6 +183,28 @@ public class SQLiteJDBC {
         }
 	}
 	
+	public static void cleanDatabase() {
+		String sql = "DELETE FROM TAG WHERE LOWER(TYPE1) IN ('wikipedia', 'wikidata', 'website', 'url', 'source', 'start_date', 'population', 'political_division', 'phone', 'border', 'note', 'network', 'leisure', 'end_date', 'description', 'collection', 'access', 'border_type', 'boundary')";
+		 try {
+	            Class.forName("org.sqlite.JDBC");
+	            Connection conn = ConnectionSingleton.getInstance().getConnection();
+	            PreparedStatement pstmt = conn.prepareStatement(sql);
+	            pstmt.executeUpdate();
+	        } catch (Exception e) {
+	            System.out.println(e.getMessage());
+	        }
+		sql = "DELETE FROM TAG WHERE TYPE1 LIKE '%disused%' OR TYPE1 LIKE '%source%' OR TYPE1 LIKE '%seamark%' OR TYPE1 LIKE '%ref:%' OR TYPE1 LIKE '%planned%' OR TYPE1 LIKE '%mtb%' OR TYPE1 LIKE '%heritage%' OR TYPE1 LIKE '%boundary%' OR TYPE1 LIKE '%name%' OR TYPE1 LIKE '%ref%' OR TYPE1 LIKE '%CLC%' OR TYPE1 LIKE '%ISO%'  OR TYPE1 LIKE '%addr%' OR TYPE1 LIKE '%admin%'";
+		try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+		sql = "DELETE FROM WAY WHERE ID NOT IN (SELECT USED_BY FROM TAG)";
+	}
+	
 	public static void insertMember(Member member) {
 		String sql = "INSERT INTO MEMBER(ID, USED_BY, ROLE) VALUES(?,?,?)";
 		 

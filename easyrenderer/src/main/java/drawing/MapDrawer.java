@@ -13,6 +13,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import exceptions.DrawingException;
+import gui.center.MapOutputView;
 import model.Map;
 import model.MapParameters;
 import model.Member;
@@ -39,17 +40,17 @@ public class MapDrawer {
             
             Graphics2D image = bi.createGraphics();
             //image.setColor(new Color(112, 183, 224));
-            image.setColor(new Color(10, 10, 50));
+            image.setColor(getBackgroundColor());
             image.fillRect(0, 0, Tile.width, Tile.height);
             
             Boolean foobar = false;
             
             for(int i=0; i<ways.size(); i++) {
             	Way currentWay = ways.get(i);
-            	System.out.println(ways.get(i).getId());	 
+            	/*System.out.println(ways.get(i).getId());	 
             	if(currentWay.getId().equals(new Double(351196528))) {
             		System.out.println("");	 
-            	}
+            	}*/
             	List<Node> idNodesList = currentWay.getNodes();
             	
             	int[] xPoints = new int[idNodesList.size()];
@@ -168,9 +169,6 @@ public class MapDrawer {
             ig2.drawString(message, (width - stringWidth) / 2, height / 2 + stringHeight / 4);*/
 
             ImageIO.write(bi, "PNG", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\map.PNG"));
-            ImageIO.write(bi, "JPEG", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\map.JPG"));
-            ImageIO.write(bi, "gif", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\map.GIF"));
-            ImageIO.write(bi, "BMP", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\map.BMP"));
             
           } catch (IOException ie) {
             ie.printStackTrace();
@@ -318,21 +316,12 @@ public class MapDrawer {
     	}
     	for(int j=0; j<nodesFound.size(); j++) {
     		Node currentNode = nodesFound.get(j);
-    		/*Double xPos = (currentNode.getLat() - m.getMinNode().getLat()) / m.getLatScale() * Tile.width;
-    		Double yPos = (currentNode.getLon() - m.getMinNode().getLon()) / m.getLonScale() * Tile.height;*/
-    		
-    		/*Double xPos = (m.getMinNode().getLat() - currentNode.getLat()) / m.getLatScale() * Tile.width;
-    		Double yPos = (m.getMinNode().getLon() - currentNode.getLon()) / m.getLonScale() * Tile.height;*/
-    		
-    		/*Double xPos = (currentNode.getLat() - m.getMaxNode().getLat()) / m.getLatScale() * Tile.width;
-    		Double yPos = (currentNode.getLon() - m.getMaxNode().getLon()) / m.getLonScale() * Tile.height;*/
-    		
-    		/*Double xPos = (m.getMaxNode().getLat() - currentNode.getLat()) / m.getLatScale() * Tile.width;
-    		Double yPos = (m.getMaxNode().getLon() - currentNode.getLon()) / m.getLonScale() * Tile.height;*/
     		
     		Double xPos = (m.getMaxNode().getLat() - currentNode.getLat()) / m.getLatScale() * Tile.width;
     		Double yPos = (m.getMaxNode().getLon() - currentNode.getLon()) / m.getLonScale() * Tile.height;
-    		yPos -= Tile.height;
+    		/*Double xPos = (m.getMaxNode().getLat() - currentNode.getLat()) * Tile.width;
+    		Double yPos = (m.getMaxNode().getLon() - currentNode.getLon()) * Tile.height;*/
+    		//yPos -= Tile.height;
     		yPos = Math.abs(yPos);
     		
     		double[] pt = {xPos, yPos};
@@ -344,33 +333,41 @@ public class MapDrawer {
     		yPos = Math.abs(yPos);
     		
     		if(xPos.intValue() > Tile.width) {
-    			throw new DrawingException("Cannot draw item at x pos: " + xPos.intValue() + " as it is > to width: " + Tile.width);
+    			xPos = (double) 0;
+    			//throw new DrawingException("Cannot draw item at x pos: " + xPos.intValue() + " as it is > to width: " + Tile.width);
     		}
     		if(yPos.intValue() > Tile.height) {
-    			throw new DrawingException("Cannot draw item at y pos: " + yPos.intValue() + " as it is > to height: " + Tile.height);
+    			yPos = (double) 0;
+    			//throw new DrawingException("Cannot draw item at y pos: " + yPos.intValue() + " as it is > to height: " + Tile.height);
     		}
     		
     		xPoints[j] = xPos.intValue();
     		yPoints[j] = yPos.intValue();
     		
-    		if(currentNode.getId().equals(new Double(4217017613.))) {
+    		/*if(currentNode.getId().equals(new Double(4217017613.))) {
     			System.out.println("");
-    		}
+    		}*/
     		
     	}
     	
-    	if(xPoints.length >= 3 && xPoints.length <= 6) {
+    	if(xPoints.length > 3 && xPoints.length <= 6
+    			&& yPoints.length > 3 && yPoints.length <= 6) {
 	    	List<java.awt.Point> points = new ArrayList<>();
 	    	for(int i=0; i<xPoints.length; i++) {
 	    		points.add(new java.awt.Point(xPoints[i],yPoints[i]));
 	    	}
-	    	List<java.awt.Point> convexHull = GrahamScan.getConvexHull(points);
-	    	
-	    	for(int i=0; i<xPoints.length; i++) {
-	    		if(i < convexHull.size()) {
-	    			xPoints[i] = convexHull.get(i).x;
-		    		yPoints[i] = convexHull.get(i).y;
-	    		}
+	    	try {
+		    	List<java.awt.Point> convexHull = GrahamScan.getConvexHull(points);
+		    	
+		    	for(int i=0; i<xPoints.length; i++) {
+		    		if(i < convexHull.size()) {
+		    			xPoints[i] = convexHull.get(i).x;
+			    		yPoints[i] = convexHull.get(i).y;
+		    		}
+		    	}
+	    	} 
+	    	catch(Exception e) {
+	    		//System.out.println(e.getMessage());
 	    	}
     	}
     	
@@ -395,5 +392,21 @@ public class MapDrawer {
 		waterResult.addAll(otherResult);
 		
 		return waterResult;
+	}
+	
+	private static Color getBackgroundColor() {
+		String colorValue = MapOutputView.BACKGROUND_COLOR;
+		if(colorValue.toLowerCase().equals("white")) {
+			return new Color(255, 255, 255);
+		}
+		if(colorValue.toLowerCase().equals("green")) {
+			return new Color(185, 239, 158);
+		}
+		if(colorValue.toLowerCase().equals("blue")) {
+			return new Color(174, 223, 249);
+		}
+		else {
+			return new Color(10, 10, 50);
+		}
 	}
 }

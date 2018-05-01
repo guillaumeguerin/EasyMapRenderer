@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import gui.center.MapOutputView;
+
 public class Map {
 
 	Node minNode;
@@ -35,6 +37,16 @@ public class Map {
 	public Node getMinNode() {
 		if(minNode == null) {
 			minNode = computeMinNode();
+			try {
+				//44.787726,-0.710559
+				String lat = MapOutputView.MIN_NODE.split(",")[0];
+				String lon = MapOutputView.MIN_NODE.split(",")[1];
+				minNode = new Node();
+				minNode.setLat(Double.parseDouble(lat));
+				minNode.setLon(Double.parseDouble(lon));
+			} catch (Exception e) {
+				
+			}
 		}
 		return minNode;
 	}
@@ -42,6 +54,16 @@ public class Map {
 	public Node getMaxNode() {
 		if(maxNode == null) {
 			maxNode = computeMaxNode();
+			try {
+				//44.783767,-0.702748
+				String lat = MapOutputView.MAX_NODE.split(",")[0];
+				String lon = MapOutputView.MAX_NODE.split(",")[1];
+				maxNode = new Node();
+				maxNode.setLat(Double.parseDouble(lat));
+				maxNode.setLon(Double.parseDouble(lon));
+			} catch (Exception e) {
+				
+			}
 		}
 		return maxNode;
 	}
@@ -113,7 +135,7 @@ public class Map {
 	public Node computeMaxNode(List<Node> n) {
 		Node myNode = null;
 		if(n.size() > 0) {
-			Node firstNode = n.get(0);
+			/*Node firstNode = n.get(0);
 			myNode = new Node(firstNode.getId(), firstNode.getLat(), firstNode.getLon());
 			for(int i=0; i<n.size(); i++) {
 				if(n.get(i).getLat() > myNode.getLat()) {
@@ -122,7 +144,17 @@ public class Map {
 				if(n.get(i).getLon() > myNode.getLon()) {
 					myNode.setLon(n.get(i).getLon());
 				}
+			}*/
+			Node firstNode = n.get(0);
+			Double meanX = firstNode.getLat();
+			Double meanY = firstNode.getLon();
+			for(int i=0; i<n.size(); i++) {
+				meanX += n.get(i).getLat();
+				meanY += n.get(i).getLon();
 			}
+			meanX /= n.size();
+			meanY /= n.size();
+			myNode = new Node(firstNode.getId(), meanX, meanY);
 		}
 		return myNode;
 	}

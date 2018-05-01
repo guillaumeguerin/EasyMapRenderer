@@ -88,6 +88,7 @@ public class FileParser {
 			}
 			
 			insertData(osmList);
+			SQLiteJDBC.cleanDatabase();
 			
 			//Map myMap = SQLiteJDBC.retrieveMapFromDB(new Double(-85), new Double(85), new Double(-180), new Double(180), 15);
 			
