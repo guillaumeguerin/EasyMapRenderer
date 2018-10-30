@@ -2,7 +2,6 @@ package gui.bottom;
 
 import java.io.File;
 
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 
@@ -26,13 +25,8 @@ public class BottomView extends HBox {
         	File[] listOfFiles = folder.listFiles();
 
     	    for (int i = 0; i < listOfFiles.length; i++) {
-    	      if (listOfFiles[i].isFile()) {
-    	        //System.out.println("File " + listOfFiles[i].getName());
-    	        if(listOfFiles[i].getName().endsWith(".db")) {
-    	        	listOfFiles[i].delete();
-    	        }
-    	      } else if (listOfFiles[i].isDirectory()) {
-    	        //System.out.println("Directory " + listOfFiles[i].getName());
+    	      if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".db")) {
+    	        listOfFiles[i].delete();
     	      }
     	    }
         });

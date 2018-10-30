@@ -1,7 +1,5 @@
 package model;
 
-import javafx.scene.control.CheckBox;
-
 public class MapParameters {
 
     public Boolean amenity = false;

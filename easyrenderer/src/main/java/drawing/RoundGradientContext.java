@@ -12,7 +12,8 @@ public class RoundGradientContext implements PaintContext {
 
     protected Point2D mRadius;
 
-    protected Color color1, color2;
+    protected Color color1;
+    protected Color color2;
 
     public RoundGradientContext(Point2D p, Color c1, Point2D r, Color c2) {
       mPoint = p;

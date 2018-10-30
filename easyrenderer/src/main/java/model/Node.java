@@ -42,8 +42,9 @@ public class Node implements Element {
 		setLon(new Double(longitude));
 	}
 	
+	//Constructor
 	public Node() {
-		// TODO Auto-generated constructor stub
+		// Empty on purpose
 	}
 	
 	public boolean equals (Node n) {

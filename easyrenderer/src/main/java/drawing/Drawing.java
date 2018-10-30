@@ -14,13 +14,13 @@ import model.Node;
 public class Drawing {
 
 	public static List<Node> sortNodes(List<Node> myList) {
-		ArrayList<Node> orderedList = new ArrayList<Node>();
+		ArrayList<Node> orderedList = new ArrayList<>();
 
 		orderedList.add(myList.remove(0)); //Arbitrary starting point
 
-		while (myList.size() > 0) {
+		while (!myList.isEmpty()) {
 		   //Find the index of the closest point (using another method)
-		   int nearestIndex=findNearestIndex(orderedList.get(orderedList.size()-1), myList);
+		   int nearestIndex = findNearestIndex(orderedList.get(orderedList.size()-1), myList);
 
 		   //Remove from the unorderedList and add to the ordered one
 		   orderedList.add(myList.remove(nearestIndex));
@@ -46,7 +46,7 @@ public class Drawing {
 	}
 	
 	public List<Node> reorderNodes(List<Double> idNodesList, Map m) {
-    	List<Node> nodesFound = new ArrayList<Node>();
+    	List<Node> nodesFound = new ArrayList<>();
     	for(int j=0; j<idNodesList.size(); j++) {
     		Node currentNode = m.retrieveNodeFromId(idNodesList.get(j));
     		nodesFound.add(currentNode);

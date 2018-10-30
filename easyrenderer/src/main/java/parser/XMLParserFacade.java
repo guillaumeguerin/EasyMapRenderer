@@ -5,8 +5,6 @@ import java.util.List;
 
 import exceptions.ParseException;
 import model.Bound;
-import model.Node;
-import model.Way;
 
 public class XMLParserFacade {
 	

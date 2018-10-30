@@ -6,7 +6,6 @@ import java.util.HashMap;
 import database.FileParser;
 import database.SQLiteJDBC;
 import drawing.MapDrawer;
-import exceptions.DrawingException;
 import gui.center.CenterView;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -18,7 +17,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import model.Map;
-import model.MapParameters;
 
 public class TopView extends HBox {
 
@@ -41,7 +39,7 @@ public class TopView extends HBox {
         	if(chosenFile != null) {
             	dialogPath.setText(chosenFile.getAbsolutePath());
             	if(chosenFile.getAbsolutePath().endsWith(".osm")) {
-            		FileParser.readFile(chosenFile.getAbsolutePath());
+            		FileParser.processOSMFile(chosenFile.getAbsolutePath());
             	}
         	}
          });
@@ -49,13 +47,10 @@ public class TopView extends HBox {
         //The button uses an inner class to handle the button click event
         Button drawButton = new Button("Draw");
         drawButton.setOnAction(value -> {
-        	HashMap<String, Boolean> mapParameters = getParameters();
-        	Map myMap = SQLiteJDBC.retrieveMapFromDB(new Double(-85), new Double(85), new Double(-180), new Double(180), 15);
-			try {
-				MapDrawer.drawMap(myMap, mapParameters);
-			} catch (DrawingException e) {
-				e.printStackTrace();
-			}
+        	Map myMap = SQLiteJDBC.retrieveMapFromDB(-85., 85., -180., 180., 15);
+			
+			MapDrawer.drawMap(myMap);
+			
         });
         
         this.getChildren().add(choiceLabel);
@@ -65,7 +60,7 @@ public class TopView extends HBox {
 	}
 	
 	public HashMap<String, Boolean> getParameters() {
-		HashMap<String, Boolean> parameters = new HashMap<String, Boolean>();
+		HashMap<String, Boolean> parameters = new HashMap<>();
 		ObservableList<Node> allElements = this.getParent().getChildrenUnmodifiable();
 		for(int i=0; i<allElements.size(); i++) {
 			Node currentNode = allElements.get(i);

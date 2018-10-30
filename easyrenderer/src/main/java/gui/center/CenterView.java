@@ -3,7 +3,6 @@ package gui.center;
 import java.util.Map;
 
 import javafx.scene.layout.HBox;
-import model.MapParameters;
 
 public class CenterView extends HBox {
 

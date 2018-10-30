@@ -73,7 +73,7 @@ public class Map {
 	}
 	
 	public void setNodes(List<Node> n) {
-		HashMap<Integer, Node> nodesMap = new HashMap<Integer, Node>();
+		HashMap<Integer, Node> nodesMap = new HashMap<>();
 		for(int i=0; i<n.size(); i++) {
 			nodesMap.put(n.get(i).getId().intValue(), n.get(i));
 		}
@@ -98,12 +98,12 @@ public class Map {
 	
 	/**
 	 * Gets the minimum latitude and longitude and creates a new Node
-	 * @param n list of nodes
+	 * @param nodes list of nodes
 	 * @return
 	 */
-	public Node computeMinNode(List<Node> n) {
-		Node myNode = null;
-		if(n.size() > 0) {
+	public Node computeMinNode(List<Node> nodes) {
+		/*Node myNode = null;
+		if(!n.isEmpty()) {
 			Node firstNode = n.get(0);
 			myNode = new Node(firstNode.getId(), firstNode.getLat(), firstNode.getLon());
 			for(int i=0; i<n.size(); i++) {
@@ -114,12 +114,27 @@ public class Map {
 					myNode.setLon(n.get(i).getLon());
 				}
 			}
+		}*/
+		Double minLat = null;
+		Double minLon = null;
+		Node myNode = new Node();
+		
+		for(Node currentNode : nodes) {
+			if((minLat == null) || (minLat > currentNode.getLat())) {
+				minLat = currentNode.getLat();
+			}
+			if((minLon == null) || (minLon > currentNode.getLon())) {
+				minLon = currentNode.getLon();
+			}
 		}
+		
+		myNode.setLat(minLat);
+		myNode.setLon(minLon);
 		return myNode;
 	}
 	
 	public Node computeMinNode(HashMap<Integer, Node> h) {
-		List<Node> nodeList = new ArrayList<Node>(h.values());
+		List<Node> nodeList = new ArrayList<>(h.values());
 		return computeMinNode(nodeList);
 	}
 	
@@ -129,22 +144,12 @@ public class Map {
 	
 	/**
 	 * Gets the maximum latitude and longitude and creates a new Node
-	 * @param n list of nodes
+	 * @param nodes list of nodes
 	 * @return
 	 */
-	public Node computeMaxNode(List<Node> n) {
-		Node myNode = null;
-		if(n.size() > 0) {
-			/*Node firstNode = n.get(0);
-			myNode = new Node(firstNode.getId(), firstNode.getLat(), firstNode.getLon());
-			for(int i=0; i<n.size(); i++) {
-				if(n.get(i).getLat() > myNode.getLat()) {
-					myNode.setLat(n.get(i).getLat());
-				}
-				if(n.get(i).getLon() > myNode.getLon()) {
-					myNode.setLon(n.get(i).getLon());
-				}
-			}*/
+	public Node computeMaxNode(List<Node> nodes) {
+		/*Node myNode = null;
+		if(!n.isEmpty()) {
 			Node firstNode = n.get(0);
 			Double meanX = firstNode.getLat();
 			Double meanY = firstNode.getLon();
@@ -155,12 +160,28 @@ public class Map {
 			meanX /= n.size();
 			meanY /= n.size();
 			myNode = new Node(firstNode.getId(), meanX, meanY);
+		}*/
+		
+		Double maxLat = null;
+		Double maxLon = null;
+		Node myNode = new Node();
+		
+		for(Node currentNode : nodes) {
+			if((maxLat == null) || (maxLat < currentNode.getLat())) {
+				maxLat = currentNode.getLat();
+			}
+			if((maxLon == null) || (maxLon < currentNode.getLon())) {
+				maxLon = currentNode.getLon();
+			}
 		}
+		
+		myNode.setLat(maxLat);
+		myNode.setLon(maxLon);
 		return myNode;
 	}
 	
 	public Node computeMaxNode(HashMap<Integer, Node> h) {
-		List<Node> nodeList = new ArrayList<Node>(h.values());
+		List<Node> nodeList = new ArrayList<>(h.values());
 		return computeMaxNode(nodeList);
 	}
 	
@@ -169,10 +190,10 @@ public class Map {
 	}
 	
 	public List<Node> getAllMapNodes() {
-		List<Node> allNodes = new ArrayList<Node>();
-		List<Way> ways = this.getWays();
+		List<Node> allNodes = new ArrayList<>();
+		List<Way> mapWays = this.getWays();
 		if(this.getWays() != null) {
-			for(Way way : ways) {
+			for(Way way : mapWays) {
 				allNodes.addAll(way.getNodes());
 			}
 		}
@@ -201,7 +222,6 @@ public class Map {
 	}
 	
 	public Boolean wayIsPresent(int id) {
-		List<Way> ways = this.getWays();
 		for(int i=0; i<ways.size(); i++) {
 			if(ways.get(i).getId().equals(new Double(id))) {
 				return true;

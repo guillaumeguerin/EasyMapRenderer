@@ -1,7 +1,6 @@
 package parser;
 
 import exceptions.ParseException;
-import model.Element;
 import model.Node;
 
 public class NodeParser extends Parser{
@@ -22,12 +21,6 @@ public class NodeParser extends Parser{
 			else if(line[i].startsWith("id")) {
 				s = line[i].split("=")[1].replace("'", "");
 				myNode.setId(Double.parseDouble(s));
-			}
-			else {
-				if(line[i].length() > 1 && (!line[i].startsWith("<") || !line[i].endsWith(">"))) {
-					//System.out.println("Unknown property: " + line[i]);
-				}
-				
 			}
 		}
 		if(myNode.getLat() == null || myNode.getLon() == null) {

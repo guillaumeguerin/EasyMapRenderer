@@ -36,7 +36,7 @@ public class Relation implements Element {
 	
 	public void addWay(Double w) {
 		if(ways == null) {
-			ways = new ArrayList<Double>();
+			ways = new ArrayList<>();
 		}
 		ways.add(w);
 	}
@@ -51,75 +51,11 @@ public class Relation implements Element {
 	
 	public void addTag(Tag t) {
 		if(tags == null) {
-			tags = new ArrayList<Tag>();
+			tags = new ArrayList<>();
 		}
 		tags.add(t);
 	}
-	
-	/*public Relation(String l) {
-		setNodes(new ArrayList<Double>());
-		String[] tags = l.split("<");
-		for(int i=0; i<tags.length; i++) {
-			String[] line = tags[i].split(" "); 
-			if(tags[i].contains("nd ref=")) {
-				if(line.length > 0 && line[1].split("=").length > 0) {
-					String nodeId = line[1].split("=")[1].replace("'", "");
-					try {
-						addNode(Double.parseDouble(nodeId));
-					}
-					catch(Exception e) {
-						System.out.println(nodeId + e.getMessage());
-					}
 
-				}
-			}
-			else if(tags[i].contains("id=")) {
-				if(line.length > 0 && line[1].split("=").length > 0) {
-					String wayId = line[1].split("=")[1].replace("'", "");
-					try {
-						setId(Double.parseDouble(wayId));
-					}
-					catch(Exception e) {
-						System.out.println(wayId + e.getMessage());
-					}
-
-				}
-			}
-			else if(tags[i].contains("tag")) {
-				if(line.length > 2 && line[1].split("=").length > 0 && line[2].split("=")[1].length() > 0) {
-					String type1 = line[1].split("=")[1].replace("'", "");
-					String type2 = line[2].split("=")[1].replace("'", "");
-					if(type1.toLowerCase().equals("natural")
-							|| type1.toLowerCase().equals("water")
-							|| type1.toLowerCase().equals("waterway")
-							|| type1.toLowerCase().equals("bridge")
-							|| type1.toLowerCase().equals("parking")
-							|| type1.toLowerCase().equals("wall")
-							|| type1.toLowerCase().equals("oneway")
-							|| type1.toLowerCase().equals("highway")
-							|| type1.toLowerCase().equals("railway")
-							|| type1.toLowerCase().equals("building")
-							|| type1.toLowerCase().equals("historic")
-							|| type1.toLowerCase().equals("area")
-							|| type1.toLowerCase().equals("surface")
-							|| type1.toLowerCase().equals("lane")
-							|| type1.toLowerCase().equals("military")
-							|| type1.toLowerCase().equals("barrier")
-							|| type1.toLowerCase().equals("lanes")
-							|| type1.toLowerCase().equals("tunnel")) {
-						setType1(type1);
-						setType2(type2);
-					}
-					else {
-						if(!type1.toLowerCase().equals("source")) {
-							System.out.println("Unused type : " + type1);
-						}
-					}
-				}
-			}
-			//System.out.println(tags[i]);
-		}
-	}*/
 	
 	public Relation(Double myId, List<Double> waysId, List<Tag> tags, List<Member> members) {
 		setId(myId);
@@ -129,12 +65,11 @@ public class Relation implements Element {
 	}
 
 	public Relation() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void addMember(Member member) {
 		if(members == null) {
-			members = new ArrayList<Member>();
+			members = new ArrayList<>();
 		}
 		members.add(member);
 	}

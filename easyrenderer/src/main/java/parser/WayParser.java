@@ -46,9 +46,8 @@ public class WayParser extends Parser {
 					myWay.addTag(new Tag(1., 1., type1, type2));
 				}
 			}
-			//System.out.println(tags[i]);
 		}
-		if(myWay.getId() == null && (myWay.getNodes() == null || myWay.getNodes().size() == 0)) {
+		if(myWay.getId() == null && (myWay.getNodes() == null || myWay.getNodes().isEmpty())) {
 			throw new ParseException("Could not parse Way from line : " + l);
 		}
 		return myWay;

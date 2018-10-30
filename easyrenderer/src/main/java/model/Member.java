@@ -50,28 +50,28 @@ public class Member implements Element {
 				if(line.length > 2 && line[1].split("=").length > 0 && line[2].split("=")[1].length() > 0) {
 					String type1 = line[1].split("=")[1].replace("'", "");
 					String type2 = line[2].split("=")[1].replace("'", "");
-					if(type1.toLowerCase().equals("natural")
-							|| type1.toLowerCase().equals("water")
-							|| type1.toLowerCase().equals("waterway")
-							|| type1.toLowerCase().equals("bridge")
-							|| type1.toLowerCase().equals("parking")
-							|| type1.toLowerCase().equals("wall")
-							|| type1.toLowerCase().equals("oneway")
-							|| type1.toLowerCase().equals("highway")
-							|| type1.toLowerCase().equals("railway")
-							|| type1.toLowerCase().equals("building")
-							|| type1.toLowerCase().equals("historic")
-							|| type1.toLowerCase().equals("area")
-							|| type1.toLowerCase().equals("surface")
-							|| type1.toLowerCase().equals("lane")
-							|| type1.toLowerCase().equals("military")
-							|| type1.toLowerCase().equals("barrier")
-							|| type1.toLowerCase().equals("lanes")
-							|| type1.toLowerCase().equals("tunnel")) {
+					if(type1.equalsIgnoreCase("natural")
+							|| type1.equalsIgnoreCase("water")
+							|| type1.equalsIgnoreCase("waterway")
+							|| type1.equalsIgnoreCase("bridge")
+							|| type1.equalsIgnoreCase("parking")
+							|| type1.equalsIgnoreCase("wall")
+							|| type1.equalsIgnoreCase("oneway")
+							|| type1.equalsIgnoreCase("highway")
+							|| type1.equalsIgnoreCase("railway")
+							|| type1.equalsIgnoreCase("building")
+							|| type1.equalsIgnoreCase("historic")
+							|| type1.equalsIgnoreCase("area")
+							|| type1.equalsIgnoreCase("surface")
+							|| type1.equalsIgnoreCase("lane")
+							|| type1.equalsIgnoreCase("military")
+							|| type1.equalsIgnoreCase("barrier")
+							|| type1.equalsIgnoreCase("lanes")
+							|| type1.equalsIgnoreCase("tunnel")) {
 						setRole(type1);
 					}
 					else {
-						if(!type1.toLowerCase().equals("source")) {
+						if(!type1.equalsIgnoreCase("source")) {
 							System.out.println("Unused type : " + type1);
 						}
 					}
@@ -92,11 +92,13 @@ public class Member implements Element {
 		setRole(role);
 	}
 
+	// Constructor
 	public Member() {
-		// TODO Auto-generated constructor stub
+		// Empty on purpose
 	}
 
 	public Member(double id) {
 		setId(id);
 	}
+
 }

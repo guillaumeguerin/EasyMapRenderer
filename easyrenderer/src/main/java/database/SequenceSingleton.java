@@ -1,9 +1,5 @@
 package database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 public class SequenceSingleton {
 
 	private static volatile SequenceSingleton ss = null;
@@ -12,10 +8,10 @@ public class SequenceSingleton {
 	
 	private SequenceSingleton() {}
 	
-	public static SequenceSingleton getInstance() throws SQLException {
+	public static SequenceSingleton getInstance() {
 		if(ss == null) {
 			ss = new SequenceSingleton();
-			d = new Double(0);
+			d = 0.;
 		}
 		return ss;
 	}

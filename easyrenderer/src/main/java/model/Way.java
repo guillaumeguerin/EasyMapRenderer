@@ -7,8 +7,8 @@ public class Way implements Element {
 
 	Double id;
 	Double usedBy;
-	List<Node> nodes = new ArrayList<Node>();
-	List<Tag> tags = new ArrayList<Tag>();
+	List<Node> nodes = new ArrayList<>();
+	List<Tag> tags = new ArrayList<>();
 	
 	public Double getId() {
 		return id;
@@ -57,7 +57,7 @@ public class Way implements Element {
 	public boolean hasSpecificTag(String type) {
 		type = type.toLowerCase();
 		for(int i=0; i<tags.size(); i++) {
-			if(type.equals(tags.get(i).type1.toLowerCase()) || type.equals(tags.get(i).type2.toLowerCase())) {
+			if(type.equalsIgnoreCase(tags.get(i).type1) || type.equalsIgnoreCase(tags.get(i).type2)) {
 				return true;
 			}
 		}
@@ -111,7 +111,6 @@ public class Way implements Element {
 	}
 
 	public Way() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Way(double id) {

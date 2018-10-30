@@ -8,6 +8,7 @@ import java.util.Map;
 import com.sun.javafx.scene.control.skin.LabeledText;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -50,6 +51,7 @@ public class MapParametersView extends VBox {
         s1.setPrefSize(120, 200);
         final VBox listCheckboxes = new VBox();
         listCheckboxes.setSpacing(10);
+        listCheckboxes.setPadding(new Insets(5, 5, 5, 5));
 
         listCheckboxes.getChildren().add(new CheckBox(AMENITY));
         listCheckboxes.getChildren().add(new CheckBox(BARRIER));
@@ -77,33 +79,41 @@ public class MapParametersView extends VBox {
         listCheckboxes.getChildren().add(new CheckBox(WATERWAY));
         listCheckboxes.getChildren().add(new CheckBox(WOOD));
         
+        for(int i=0; i < listCheckboxes.getChildren().size(); i++) {
+        	Node currentNode = listCheckboxes.getChildren().get(i);
+        	if(currentNode instanceof CheckBox) {
+        		CheckBox currentCheckBox = (CheckBox) currentNode;
+        		currentCheckBox.setSelected(true);
+        	}
+        }
+        
         s1.setContent(listCheckboxes);
         
-        checkedParameters.put(AMENITY, false);
-        checkedParameters.put(BARRIER, false);
-        checkedParameters.put(BORDER_TYPE, false);
-        checkedParameters.put(BUILDING, false);
-        checkedParameters.put(COASTLINE, false);
-        checkedParameters.put(CUISINE, false);
-        checkedParameters.put(GRASS, false);
-        checkedParameters.put(GROUND, false);
-        checkedParameters.put(HIGHWAY, false);
-        checkedParameters.put(HISTORIC, false);
-        checkedParameters.put(LEISURE, false);
-        checkedParameters.put(NAME, false);
-        checkedParameters.put(NATURAL, false);
-        checkedParameters.put(NEIGHBOURHOOD, false);
-        checkedParameters.put(TOURISM, false);
-        checkedParameters.put(PARKING, false);
-        checkedParameters.put(PLACE, false);
-        checkedParameters.put(RECYCLING, false);
-        checkedParameters.put(RESIDENTIAL, false);
-        checkedParameters.put(SPORT, false);
-        checkedParameters.put(SAND, false);
-        checkedParameters.put(WALL, false);
-        checkedParameters.put(WATER, false);
-        checkedParameters.put(WATERWAY, false);
-        checkedParameters.put(WOOD, false);
+        checkedParameters.put(AMENITY, true);
+        checkedParameters.put(BARRIER, true);
+        checkedParameters.put(BORDER_TYPE, true);
+        checkedParameters.put(BUILDING, true);
+        checkedParameters.put(COASTLINE, true);
+        checkedParameters.put(CUISINE, true);
+        checkedParameters.put(GRASS, true);
+        checkedParameters.put(GROUND, true);
+        checkedParameters.put(HIGHWAY, true);
+        checkedParameters.put(HISTORIC, true);
+        checkedParameters.put(LEISURE, true);
+        checkedParameters.put(NAME, true);
+        checkedParameters.put(NATURAL, true);
+        checkedParameters.put(NEIGHBOURHOOD, true);
+        checkedParameters.put(TOURISM, true);
+        checkedParameters.put(PARKING, true);
+        checkedParameters.put(PLACE, true);
+        checkedParameters.put(RECYCLING, true);
+        checkedParameters.put(RESIDENTIAL, true);
+        checkedParameters.put(SPORT, true);
+        checkedParameters.put(SAND, true);
+        checkedParameters.put(WALL, true);
+        checkedParameters.put(WATER, true);
+        checkedParameters.put(WATERWAY, true);
+        checkedParameters.put(WOOD, true);
         
         Button checkButton = new Button("Select All");
         checkButton.setOnAction(value -> {

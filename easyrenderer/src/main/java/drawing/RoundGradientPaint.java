@@ -1,8 +1,6 @@
 package drawing;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.PaintContext;
 import java.awt.Rectangle;
@@ -17,7 +15,8 @@ public class RoundGradientPaint implements Paint {
 	
 	protected Point2D mRadius;
 	
-	protected Color mPointColor, mBackgroundColor;
+	protected Color mPointColor;
+	protected Color mBackgroundColor;
 	
 	public RoundGradientPaint(double x, double y, Color pointColor,
 	    Point2D radius, Color backgroundColor) {

@@ -35,8 +35,6 @@ public class MapOutputView extends VBox{
 	        if(listOfFiles[i].getName().endsWith(".css")) {
 	        	cssList.add(listOfFiles[i].getName());
 	        }
-	      } else if (listOfFiles[i].isDirectory()) {
-	        //System.out.println("Directory " + listOfFiles[i].getName());
 	      }
 	    }
 	    ObservableList cssObservableList = FXCollections.observableList(cssList);
