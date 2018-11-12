@@ -7,6 +7,9 @@ import model.Way;
 
 import java.util.ArrayList;
 
+/**
+ * Class for parsing XML tag Way
+ */
 public class WayParser extends Parser {
 
     public static Way parse(String l) throws ParseException {

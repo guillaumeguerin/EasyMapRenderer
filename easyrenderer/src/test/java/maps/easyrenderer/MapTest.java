@@ -17,7 +17,7 @@ public class MapTest {
         Map map = new Map();
         map.setNodes(nodes);
         Node minNode = map.computeMinNode(nodes);
-        assertNull(minNode.getLat());
+        assertNull(minNode.getLatitude());
     }
 
     @Test
@@ -30,7 +30,7 @@ public class MapTest {
         Map map = new Map();
         map.setNodes(nodes);
         Node minNode = map.computeMinNode(nodes);
-        assertTrue(minNode.getLat().equals(new Double(-1)) && minNode.getLon().equals(new Double(-80)));
+        assertTrue(minNode.getLatitude().equals(new Double(-1)) && minNode.getLongitude().equals(new Double(-80)));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class MapTest {
         Map map = new Map();
         map.setNodes(nodes);
         Node maxNode = map.computeMaxNode(nodes);
-        assertNull(maxNode.getLat());
+        assertNull(maxNode.getLatitude());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class MapTest {
         Map map = new Map();
         map.setNodes(nodes);
         Node maxNode = map.computeMaxNode(nodes);
-        assertTrue(maxNode.getLat().equals(new Double(10)) && maxNode.getLon().equals(new Double(-1)));
+        assertTrue(maxNode.getLatitude().equals(new Double(10)) && maxNode.getLongitude().equals(new Double(-1)));
     }
 
     @Test

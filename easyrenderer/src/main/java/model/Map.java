@@ -47,14 +47,17 @@ public class Map {
     }
 
     public Node getMinNode() {
-        if (minNode == null || minNode.getLat() == null) {
+        if (minNode == null || minNode.getLatitude() == null) {
             minNode = computeMinNode();
             try {
-                String lat = MapOutputView.MIN_NODE.split(",")[0];
-                String lon = MapOutputView.MIN_NODE.split(",")[1];
-                minNode = new Node();
-                minNode.setLat(Double.parseDouble(lat));
-                minNode.setLon(Double.parseDouble(lon));
+            	String[] latlonSplit = MapOutputView.MIN_NODE.split(",");
+            	if(latlonSplit.length > 1) {
+            		String latitude = MapOutputView.MIN_NODE.split(",")[0];
+                    String longitude = MapOutputView.MIN_NODE.split(",")[1];
+                    minNode = new Node();
+                    minNode.setLatitude(Double.parseDouble(latitude));
+                    minNode.setLongitude(Double.parseDouble(longitude));
+            	}
             } catch (Exception e) {
                 logger.error(e);
             }
@@ -66,11 +69,14 @@ public class Map {
         if (maxNode == null) {
             maxNode = computeMaxNode();
             try {
-                String lat = MapOutputView.MAX_NODE.split(",")[0];
-                String lon = MapOutputView.MAX_NODE.split(",")[1];
-                maxNode = new Node();
-                maxNode.setLat(Double.parseDouble(lat));
-                maxNode.setLon(Double.parseDouble(lon));
+            	String[] latlonSplit = MapOutputView.MAX_NODE.split(",");
+            	if(latlonSplit.length > 1) {
+            		String lat = MapOutputView.MAX_NODE.split(",")[0];
+                    String lon = MapOutputView.MAX_NODE.split(",")[1];
+                    maxNode = new Node();
+                    maxNode.setLatitude(Double.parseDouble(lat));
+                    maxNode.setLongitude(Double.parseDouble(lon));
+            	}
             } catch (Exception e) {
                 logger.error(e);
             }
@@ -118,16 +124,16 @@ public class Map {
         Node myNode = new Node();
 
         for (Node currentNode : nodes) {
-            if ((minLat == null) || (minLat > currentNode.getLat())) {
-                minLat = currentNode.getLat();
+            if ((minLat == null) || (minLat > currentNode.getLatitude())) {
+                minLat = currentNode.getLatitude();
             }
-            if ((minLon == null) || (minLon > currentNode.getLon())) {
-                minLon = currentNode.getLon();
+            if ((minLon == null) || (minLon > currentNode.getLongitude())) {
+                minLon = currentNode.getLongitude();
             }
         }
 
-        myNode.setLat(minLat);
-        myNode.setLon(minLon);
+        myNode.setLatitude(minLat);
+        myNode.setLongitude(minLon);
         return myNode;
     }
 
@@ -147,16 +153,16 @@ public class Map {
         Node myNode = new Node();
 
         for (Node currentNode : nodes) {
-            if ((maxLat == null) || (maxLat < currentNode.getLat())) {
-                maxLat = currentNode.getLat();
+            if ((maxLat == null) || (maxLat < currentNode.getLatitude())) {
+                maxLat = currentNode.getLatitude();
             }
-            if ((maxLon == null) || (maxLon < currentNode.getLon())) {
-                maxLon = currentNode.getLon();
+            if ((maxLon == null) || (maxLon < currentNode.getLongitude())) {
+                maxLon = currentNode.getLongitude();
             }
         }
 
-        myNode.setLat(maxLat);
-        myNode.setLon(maxLon);
+        myNode.setLatitude(maxLat);
+        myNode.setLongitude(maxLon);
         return myNode;
     }
 
@@ -187,29 +193,11 @@ public class Map {
         // Empty on purpose.
     }
 
-    public Node retrieveNodeFromId(Double myId) {
-        return nodes.get(myId.intValue());
-    }
-
     public Double getLatScale() {
-        return this.getMaxNode().getLat() - this.getMinNode().getLat();
+        return this.getMaxNode().getLatitude() - this.getMinNode().getLatitude();
     }
 
     public Double getLonScale() {
-        return this.getMaxNode().getLon() - this.getMinNode().getLon();
-    }
-
-    public Boolean wayIsPresent(int id) {
-        for (int i = 0; i < ways.size(); i++) {
-            if (ways.get(i).getId().equals(new Double(id))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Boolean nodeIsPresent(int id) {
-        Node n = this.nodes.get(id);
-        return n != null;
+        return this.getMaxNode().getLongitude() - this.getMinNode().getLongitude();
     }
 }

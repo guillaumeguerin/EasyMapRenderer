@@ -109,8 +109,8 @@ public class SQLiteJDBC {
             Connection conn = ConnectionSingleton.getInstance().getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setDouble(1, node.getId());
-            pstmt.setDouble(2, node.getLat());
-            pstmt.setDouble(3, node.getLon());
+            pstmt.setDouble(2, node.getLatitude());
+            pstmt.setDouble(3, node.getLongitude());
             pstmt.setInt(4, 0);
             pstmt.executeUpdate();
         } catch (Exception e) {
@@ -378,53 +378,6 @@ public class SQLiteJDBC {
     public static void updateWays(Relation r) {
         for (int i = 0; i < r.getWays().size(); i++) {
             updateWay(r, r.getWays().get(i));
-        }
-    }
-
-    public static void updateTag(Double itemId, Double tagId) {
-        String sql = "UPDATE TAG SET USED_BY = ? WHERE ID = ?";
-        PreparedStatement pstmt = null;
-        try {
-            Class.forName("org.sqlite.JDBC");
-            Connection conn = ConnectionSingleton.getInstance().getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setDouble(1, itemId);
-            pstmt.setDouble(2, tagId);
-            pstmt.executeUpdate();
-        } catch (Exception e) {
-            logger.error(e);
-        } finally {
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    logger.error(e);
-                }
-            }
-        }
-    }
-
-    public static void updateMember(Double itemId, Double memberId) {
-        String sql = "UPDATE MEMBER SET USED_BY = ? WHERE ID = ?";
-        PreparedStatement pstmt = null;
-
-        try {
-            Class.forName("org.sqlite.JDBC");
-            Connection conn = ConnectionSingleton.getInstance().getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setDouble(1, itemId);
-            pstmt.setDouble(2, memberId);
-            pstmt.executeUpdate();
-        } catch (Exception e) {
-            logger.error(e);
-        } finally {
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    logger.error(e);
-                }
-            }
         }
     }
 

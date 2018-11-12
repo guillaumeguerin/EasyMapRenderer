@@ -43,44 +43,6 @@ public class Tag implements Element {
         type2 = type;
     }
 
-    public Tag(String l) {
-        String[] tags = l.split("<");
-        for (int i = 0; i < tags.length; i++) {
-            String[] line = tags[i].split(" ");
-            if (tags[i].contains("tag")) {
-                if (line.length > 2 && line[1].split("=").length > 0 && line[2].split("=")[1].length() > 0) {
-                    String lineType1 = line[1].split("=")[1].replace("'", "");
-                    String lineType2 = line[2].split("=")[1].replace("'", "");
-                    if (lineType1.equalsIgnoreCase("natural")
-                            || lineType1.equalsIgnoreCase("water")
-                            || lineType1.equalsIgnoreCase("waterway")
-                            || lineType1.equalsIgnoreCase("bridge")
-                            || lineType1.equalsIgnoreCase("parking")
-                            || lineType1.equalsIgnoreCase("wall")
-                            || lineType1.equalsIgnoreCase("oneway")
-                            || lineType1.equalsIgnoreCase("highway")
-                            || lineType1.equalsIgnoreCase("railway")
-                            || lineType1.equalsIgnoreCase("building")
-                            || lineType1.equalsIgnoreCase("historic")
-                            || lineType1.equalsIgnoreCase("area")
-                            || lineType1.equalsIgnoreCase("surface")
-                            || lineType1.equalsIgnoreCase("lane")
-                            || lineType1.equalsIgnoreCase("military")
-                            || lineType1.equalsIgnoreCase("barrier")
-                            || lineType1.equalsIgnoreCase("lanes")
-                            || lineType1.equalsIgnoreCase("tunnel")) {
-                        setType1(lineType1);
-                        setType2(lineType2);
-                    } else {
-                        if (!lineType1.equalsIgnoreCase("source")) {
-                            logger.info("Unused type : " + lineType1);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     public Tag(Double myId, Double usedBy, String type1, String type2) {
         setId(myId);
         setUsedBy(usedBy);

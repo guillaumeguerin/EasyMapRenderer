@@ -3,12 +3,15 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Relation model class
+ */
 public class Relation implements Element {
 
-    Double id;
-    List<Double> ways;
-    List<Tag> tags;
-    List<Member> members;
+    private Double id;
+    private List<Double> ways;
+    private List<Tag> tags;
+    private List<Member> members;
 
     public Double getId() {
         return id;
@@ -56,7 +59,6 @@ public class Relation implements Element {
         tags.add(t);
     }
 
-
     public Relation(Double myId, List<Double> waysId, List<Tag> tags, List<Member> members) {
         setId(myId);
         setWays(waysId);
@@ -73,22 +75,4 @@ public class Relation implements Element {
         }
         members.add(member);
     }
-
-    /*public Double getRelationInnerWay() {
-        for (int i = 0; i < members.size(); i++) {
-            if (members.get(i).getRole().equals("inner")) {
-                return members.get(i).getUsedBy();
-            }
-        }
-        return 0.;
-    }
-
-    public Double getRelationOuterWay() {
-        for (int i = 0; i < members.size(); i++) {
-            if (members.get(i).getRole().equals("outer")) {
-                return members.get(i).getUsedBy();
-            }
-        }
-        return 0.;
-    }*/
 }

@@ -458,8 +458,8 @@ public class MapDrawer {
      * @return a xy point to draw
      */
     public static Point2D getMapCoordinates(Map map, Node currentNode) {
-        Double xPos = (currentNode.getLat() - map.getMinNode().getLat()) / map.getLatScale() * Tile.width;
-        Double yPos = (currentNode.getLon() - map.getMinNode().getLon()) / map.getLonScale() * Tile.height;
+        Double xPos = (currentNode.getLatitude() - map.getMinNode().getLatitude()) / map.getLatScale() * Tile.width;
+        Double yPos = (currentNode.getLongitude() - map.getMinNode().getLongitude()) / map.getLonScale() * Tile.height;
         return new Point2D.Double(xPos.intValue(), yPos.intValue());
     }
 

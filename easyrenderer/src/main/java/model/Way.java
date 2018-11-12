@@ -68,43 +68,6 @@ public class Way implements Element {
         return false;
     }
 
-    public Way(String l) {
-        setNodes(new ArrayList<Node>());
-        String[] tags = l.split("<");
-        for (int i = 0; i < tags.length; i++) {
-            String[] line = tags[i].split(" ");
-            if (tags[i].contains("nd ref=")) {
-                if (line.length > 0 && line[1].split("=").length > 0) {
-                    String nodeId = line[1].split("=")[1].replace("'", "");
-                    try {
-                        addNode(new Node(new Double(nodeId), 1., 1.));
-                    } catch (Exception e) {
-                        logger.debug("Node : " + nodeId);
-                        logger.error(e);
-                    }
-
-                }
-            } else if (tags[i].contains("id=")) {
-                if (line.length > 0 && line[1].split("=").length > 0) {
-                    String wayId = line[1].split("=")[1].replace("'", "");
-                    try {
-                        setId(Double.parseDouble(wayId));
-                    } catch (Exception e) {
-                        logger.debug("Way : " + wayId);
-                        logger.error(e);
-                    }
-
-                }
-            } else if (tags[i].contains("tag")) {
-                if (line.length > 2 && line[1].split("=").length > 0 && line[2].split("=")[1].length() > 0) {
-                    String type1 = line[1].split("=")[1].replace("'", "");
-                    String type2 = line[2].split("=")[1].replace("'", "");
-                    this.addTag(new Tag(1., 1., type1, type2));
-                }
-            }
-        }
-    }
-
     public Way(Double myId, Double usedBy, List<Node> nodes, List<Tag> tags) {
         setId(myId);
         setUsedBy(usedBy);

@@ -35,8 +35,8 @@ public class Drawing {
         int nearestIndex = 0;
         for (int i = 0; i < listToSearch.size(); i++) {
             Node point2 = listToSearch.get(i);
-            Double distsq = (thisPoint.getLat() - point2.getLat()) * (thisPoint.getLat() - point2.getLat())
-                    + (thisPoint.getLon() - point2.getLon()) * (thisPoint.getLon() - point2.getLon());
+            Double distsq = (thisPoint.getLatitude() - point2.getLatitude()) * (thisPoint.getLatitude() - point2.getLatitude())
+                    + (thisPoint.getLongitude() - point2.getLongitude()) * (thisPoint.getLongitude() - point2.getLongitude());
             if (distsq < nearestDistSquared) {
                 nearestDistSquared = distsq;
                 nearestIndex = i;
@@ -47,13 +47,13 @@ public class Drawing {
 
     public static int computeXPosition(Map m, Node n) {
 
-        Double pos = Math.abs((n.getLat() - m.getMinNode().getLat()));
+        Double pos = Math.abs((n.getLatitude() - m.getMinNode().getLatitude()));
         pos = pos / m.getLatScale() * Tile.width;
         return pos.intValue();
     }
 
     public static int computeYPosition(Map m, Node n) {
-        Double pos = Math.abs((n.getLon() - m.getMinNode().getLon())) / m.getLonScale() * Tile.height;
+        Double pos = Math.abs((n.getLongitude() - m.getMinNode().getLongitude())) / m.getLonScale() * Tile.height;
         return pos.intValue();
     }
 }

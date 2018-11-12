@@ -3,17 +3,22 @@ package parser;
 import exceptions.ParseException;
 import model.Bound;
 
-import java.awt.*;
-import java.util.List;
-
+/**
+ * Class for XML Parsing
+ */
 public class XMLParserFacade {
-
-    List<Object> oList;
 
     static Boolean way = false;
     static Boolean relation = false;
     static String wayText = "";
     static String relationText = "";
+
+    /**
+     * Private constructor to hide the implicit one.
+     */
+    private XMLParserFacade() {
+        //Empty on purpose.
+    }
 
     public static Object build(String text) throws ParseException {
         Object o = new Object();
@@ -43,24 +48,6 @@ public class XMLParserFacade {
             relationText += text;
         }
         return o;
-    }
-
-
-    public Color parseColor(String attribute) throws ParseException {
-        if (attribute.startsWith("#")) {
-            return hex2Rgb(attribute.replace("#", ""));
-        } else if (attribute.startsWith("rgb(")) {
-            String[] rgbValues = attribute.replace("rgb(", "").replace(")", "").split(",");
-            return new Color(Integer.parseInt(rgbValues[0]), Integer.parseInt(rgbValues[1]), Integer.parseInt(rgbValues[2]));
-        }
-        throw new ParseException("Cannot parse element : " + attribute + " to color.");
-    }
-
-    public static Color hex2Rgb(String colorStr) {
-        return new Color(
-                Integer.valueOf(colorStr.substring(1, 3), 16),
-                Integer.valueOf(colorStr.substring(3, 5), 16),
-                Integer.valueOf(colorStr.substring(5, 7), 16));
     }
 }
 
