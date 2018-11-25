@@ -1,0 +1,443 @@
+[
+	{
+		"tag": "Amenity",
+		"type": "polygon",
+		"color": [
+			114,
+			224,
+			116
+		]
+	},
+	{
+		"tag": "Asphalt",
+		"type": "polygon",
+		"color": [
+			149,
+			167,
+			179
+		]
+	},
+	{
+		"tag": "Barrier",
+		"type": "line",
+		"color": [
+			229,
+			222,
+			192
+		]
+	},
+	{
+		"tag": "Border",
+		"type": "line",
+		"color": [
+			135,
+			133,
+			127
+		]
+	},
+	{
+		"tag": "Building",
+		"type": "polygon",
+		"color": [
+			255,
+			244,
+			214
+		]
+	},
+	{
+		"tag": "Campsite",
+		"type": "polygon",
+		"color": [
+			123,
+			247,
+			182
+		]
+	},
+	{
+		"tag": "Canal",
+		"type": "polygon",
+		"color": [
+			102,
+			160,
+			247
+		]
+	},
+	{
+		"tag": "Coastline",
+		"type": "polygon",
+		"color": [
+			247,
+			230,
+			153
+		]
+	},
+	{
+		"tag": "Compacted",
+		"type": "polygon",
+		"color": [
+			81,
+			69,
+			55
+		]
+	},
+	{
+		"tag": "Cuisine",
+		"type": "polygon",
+		"color": [
+			230,
+			249,
+			52
+		]
+	},
+	{
+		"tag": "Ditch",
+		"type": "polygon",
+		"color": [
+			56,
+			101,
+			138
+		]
+	},
+	{
+		"tag": "Earth",
+		"type": "polygon",
+		"color": [
+			58,
+			31,
+			1
+		]
+	},
+	{
+		"tag": "Fairway",
+		"type": "polygon",
+		"color": [
+			138,
+			233,
+			161
+		]
+	},
+	{
+		"tag": "Farmland",
+		"type": "polygon",
+		"color": [
+			174,
+			163,
+			26
+		]
+	},
+	{
+		"tag": "Footway",
+		"type": "line",
+		"color": [
+			132,
+			108,
+			79
+		]
+	},
+	{
+		"tag": "Forest",
+		"type": "polygon",
+		"color": [
+			17,
+			89,
+			17
+		]
+	},
+	{
+		"tag": "Grass",
+		"type": "polygon",
+		"color": [
+			151,
+			229,
+			144
+		]
+	},
+	{
+		"tag": "Groud",
+		"type": "polygon",
+		"color": [
+			183,
+			118,
+			88
+		]
+	},
+	{
+		"tag": "Highway",
+		"type": "polygon",
+		"color": [
+			204,
+			196,
+			177
+		]
+	},
+	{
+		"tag": "Historic",
+		"type": "polygon",
+		"color": [
+			114,
+			224,
+			116
+		]
+	},
+	{
+		"tag": "Hole",
+		"type": "polygon",
+		"color": [
+			25,
+			150,
+			57
+		]
+	},
+	{
+		"tag": "Leisure",
+		"type": "polygon",
+		"color": [
+			114,
+			224,
+			116
+		]
+	},
+	{
+		"tag": "Marsh",
+		"type": "polygon",
+		"color": [
+			90,
+			128,
+			124
+		]
+	},
+	{
+		"tag": "Meadow",
+		"type": "polygon",
+		"color": [
+			116,
+			231,
+			105
+		]
+	},
+	{
+		"tag": "Metropole",
+		"type": "polygon",
+		"color": [
+			101,
+			109,
+			106
+		]
+	},
+	{
+		"tag": "Name",
+		"type": "text",
+		"color": [
+			45,
+			44,
+			42
+		]
+	},
+	{
+		"tag": "Natural",
+		"type": "polygon",
+		"color": [
+			114,
+			224,
+			116
+		]
+	},
+	{
+		"tag": "Neighbourhood",
+		"type": "polygon",
+		"color": [
+			162,
+			216,
+			151
+		]
+	},
+	{
+		"tag": "Tourism",
+		"type": "polygon",
+		"color": [
+			114,
+			224,
+			116
+		]
+	},
+	{
+		"tag": "Oneway",
+		"type": "polygon",
+		"color": [
+			204,
+			196,
+			177
+		]
+	},
+	{
+		"tag": "Parking",
+		"type": "polygon",
+		"color": [
+			133,
+			148,
+			150
+		]
+	},
+	{
+		"tag": "Paved",
+		"type": "polygon",
+		"color": [
+			150,
+			147,
+			142
+		]
+	},
+	{
+		"tag": "Parking_aisle",
+		"type": "polygon",
+		"color": [
+			165,
+			180,
+			182
+		]
+	},
+	{
+		"tag": "Path",
+		"type": "line",
+		"color": [
+			229,
+			199,
+			162
+		]
+	},
+	{
+		"tag": "Place",
+		"type": "polygon",
+		"color": [
+			29,
+			29,
+			42
+		]
+	},
+	{
+		"tag": "Recycling",
+		"type": "polygon",
+		"color": [
+			88,
+			183,
+			67
+		]
+	},
+	{
+		"tag": "Residential",
+		"type": "polygon",
+		"color": [
+			177,
+			204,
+			171
+		]
+	},
+	{
+		"tag": "Roundabout",
+		"type": "polygon",
+		"color": [
+			189,
+			204,
+			206
+		]
+	},
+	{
+		"tag": "Saltmarsh",
+		"type": "polygon",
+		"color": [
+			122,
+			238,
+			255
+		]
+	},
+	{
+		"tag": "Sand",
+		"type": "polygon",
+		"color": [
+			255,
+			253,
+			178
+		]
+	},
+	{
+		"tag": "Sport",
+		"type": "polygon",
+		"color": [
+			112,
+			206,
+			92
+		]
+	},
+	{
+		"tag": "Tidal",
+		"type": "polygon",
+		"color": [
+			115,
+			162,
+			172
+		]
+	},
+	{
+		"tag": "Tidal_flat",
+		"type": "polygon",
+		"color": [
+			65,
+			122,
+			172
+		]
+	},
+	{
+		"tag": "Track",
+		"type": "line",
+		"color": [
+			107,
+			101,
+			88
+		]
+	},
+	{
+		"tag": "Wall",
+		"type": "polygon",
+		"color": [
+			216,
+			220,
+			223
+		]
+	},
+	{
+		"tag": "Water",
+		"type": "polygon",
+		"color": [
+			110,
+			186,
+			244
+		]
+	},
+	{
+		"tag": "Waterway",
+		"type": "polygon",
+		"color": [
+			110,
+			186,
+			244
+		]
+	},
+	{
+		"tag": "Wetland",
+		"type": "polygon",
+		"color": [
+			79,
+			198,
+			244
+		]
+	},
+	{
+		"tag": "Wood",
+		"type": "polygon",
+		"color": [
+			78,
+			114,
+			75
+		]
+	}
+]
