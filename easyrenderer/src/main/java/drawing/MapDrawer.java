@@ -4,6 +4,7 @@ import exceptions.DrawingException;
 import gui.center.MapOutputView;
 import model.*;
 import org.apache.log4j.Logger;
+import preferences.UserDesignSingleton;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -17,6 +18,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Class that draws the map to an image.
+ */
 public class MapDrawer {
 
     private static final Logger logger = Logger.getLogger(MapDrawer.class);
@@ -28,25 +32,34 @@ public class MapDrawer {
         // Empty on purpose.
     }
 
-    public static void drawMap(Map m) {
+    /**
+     * Draws the map and save it to a file
+     *
+     * @param map the map
+     */
+    public static void drawMap(Map map) {
         try {
-            BufferedImage bi = drawMapOnImage(m);
-            ImageIO.write(bi, "PNG", new File("C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\map.PNG"));
+            BufferedImage bi = drawMapOnImage(map);
+            String filePath = System.getProperty("user.dir") + "\\map.PNG";
+            ImageIO.write(bi, "PNG", new File(filePath));
 
         } catch (IOException ie) {
             logger.error(ie);
         }
     }
 
-    public static BufferedImage drawMapOnImage(Map m) {
+    /**
+     * Draws the map
+     *
+     * @param map input map
+     * @return an image
+     */
+    public static BufferedImage drawMapOnImage(Map map) {
         BufferedImage bi = new BufferedImage(Tile.width, Tile.height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D image = bi.createGraphics();
 
-        // TYPE_INT_ARGB specifies the image format: 8-bit RGBA packed
-        // into integer pixels
-        List<Way> ways = m.getWays();
-        List<Relation> relations = m.getRelations();
-
+        List<Way> ways = map.getWays();
+        List<Relation> relations = map.getRelations();
         ways = addRelationTagsToWay(ways, relations);
         ways = reOrderWays(ways);
 
@@ -54,71 +67,7 @@ public class MapDrawer {
         image.fillRect(0, 0, Tile.width, Tile.height);
 
         for (int i = 0; i < ways.size(); i++) {
-            Way currentWay = ways.get(i);
-
-            if (!userWantsWayToBeDrawn(m, currentWay)) {
-                continue;
-            }
-
-            List<Node> idNodesList = currentWay.getNodes();
-
-            List<int[]> xyPoints = computeNodePosition(m, idNodesList);
-            int[] xPoints = xyPoints.get(0);
-            int[] yPoints = xyPoints.get(1);
-
-            Color color = findColor(ways, i);
-            image.setColor(color);
-
-
-            if (isWayPolygon(currentWay)) {
-                image.fillPolygon(xPoints, yPoints, xPoints.length);
-            } else {
-                List<Integer> xPoints2 = new ArrayList<>();
-                List<Integer> yPoints2 = new ArrayList<>();
-                List<Integer> xPoints3 = new ArrayList<>();
-                List<Integer> yPoints3 = new ArrayList<>();
-
-                for (int j = 0; j < xPoints.length - 1; j++) {
-                    xPoints3.add(xPoints[j]);
-                    yPoints3.add(yPoints[j]);
-                }
-                int cpt = 0;
-                while (xPoints3.size() > 0) {
-                    Integer currentX = xPoints3.get(0);
-                    Integer currentY = yPoints3.get(0);
-                    if (cpt == 0) {
-                        xPoints2.add(currentX);
-                        yPoints2.add(currentY);
-                        xPoints3.remove(0);
-                        yPoints3.remove(0);
-                    }
-
-                    double min = -1;
-                    for (int j = 0; j < xPoints3.size(); j++) {
-                        double dist = calculateDistanceBetweenPoints(currentX, currentY, xPoints3.get(j), yPoints3.get(j));
-                        if (min == -1 || dist < min) {
-                            min = dist;
-                            xPoints2.add(xPoints3.get(j));
-                            yPoints2.add(yPoints3.get(j));
-                            xPoints3.remove(j);
-                            yPoints3.remove(j);
-                        }
-                    }
-                }
-
-                for (int j = 0; j < xPoints.length - 1; j++) {
-                    xPoints[j] = xPoints2.get(j);
-                    yPoints[j] = yPoints2.get(j);
-                }
-
-
-                for (int j = 0; j < xPoints.length - 2; j++) {
-                    //TODO
-                    //Reorder for line drawing to closest point from one another
-                    image.drawLine(xPoints[j], yPoints[j], xPoints[j + 1], yPoints[j + 1]);
-                }
-            }
-
+            drawWayOnImage(image, map, ways, i);
         }
 
 
@@ -141,12 +90,62 @@ public class MapDrawer {
         // Drawing the rotated image at the required drawing locations
         image.drawImage(op.filter(bi, null), 0, 0, null);
 
-        //image.drawImage(bi, null, 0, 0);
         return bi;
     }
 
+    /**
+     * Draws the way on the image
+     *
+     * @param image the image we are currently building
+     * @param map   the map
+     * @param ways  the ways to draw
+     * @param index the index
+     */
+    public static void drawWayOnImage(Graphics2D image, Map map, List<Way> ways, int index) {
+        Way currentWay = ways.get(index);
+        if (!userWantsWayToBeDrawn(map, currentWay)) {
+            return;
+        }
+
+        List<Node> idNodesList = currentWay.getNodes();
+
+        List<int[]> xyPoints = computeNodePosition(map, idNodesList, isWayPolygon(map, currentWay));
+        int[] xPoints = xyPoints.get(0);
+        int[] yPoints = xyPoints.get(1);
+
+        UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+        Color color = Color.WHITE;
+        String currentType = ways.get(index).getTags().get(0).getType2();
+        currentType = capitalizeString(currentType);
+        if (!(ways.get(index).getTags().isEmpty()) && designSingleton.getTypeToColorMap() != null && designSingleton.getTypeToColorMap().containsKey(currentType)) {
+            color = designSingleton.getTypeToColorMap().get(currentType);
+        }
+
+        image.setColor(color);
+
+        if (isWayPolygon(map, currentWay)) {
+            image.fillPolygon(xPoints, yPoints, xPoints.length);
+        } else {
+            for (int j = 0; j < xPoints.length - 2; j++) {
+                image.drawLine(xPoints[j], yPoints[j], xPoints[j + 1], yPoints[j + 1]);
+            }
+        }
+    }
+
+    private static String capitalizeString(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    /**
+     * Does the user has checked the check box in the GUI ?
+     *
+     * @param m
+     * @param w
+     * @return
+     */
     private static boolean userWantsWayToBeDrawn(Map m, Way w) {
-        HashMap<String, Boolean> parameters = m.getTypesToDrawParametersMap();
+        UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+        HashMap<String, Boolean> parameters = designSingleton.getCheckedParameters();
         if (parameters != null && w.getTags() != null && w.getTags().size() > 0 && w.getTags().get(0).getType2() != null) {
             String type = w.getTags().get(0).getType2();
             String cap = type.substring(0, 1).toUpperCase() + type.substring(1);
@@ -159,225 +158,26 @@ public class MapDrawer {
         return true;
     }
 
-    public static boolean isWayPolygon(Way w) {
-        List<Tag> tags = w.getTags();
-        for (Tag tag : tags) {
-            if (isTagOfType(tag, "path")) {
-                return false;
-            } else if (isTagOfType(tag, "footway")) {
-                return false;
-            }
-        }
-        return true;
-    }
+    /**
+     * Checks the type of the way
+     *
+     * @param map the map
+     * @param way the way
+     * @return true if its a polygon
+     */
+    public static boolean isWayPolygon(Map map, Way way) {
+        UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+        HashMap<String, String> polygonTypes = designSingleton.getTypeToPolygonMap();
+        if (polygonTypes != null) {
+            List<Tag> tags = way.getTags();
+            for (Tag tag : tags) {
+                if (polygonTypes.containsKey(tag.getType2())) {
+                    return "polygon".equals(polygonTypes.get(tag.getType2()));
+                }
 
-    public static boolean isTagOfType(Tag tag, String type) {
-        return (tag.getType1().contains(type) || tag.getType2().contains(type));
-    }
-
-    public static boolean wayMachesType(Way w, String type) {
-        type = type.toLowerCase();
-        for (Tag t : w.getTags()) {
-            if (/*type.equalsIgnoreCase(t.getType1()) || */type.equalsIgnoreCase(t.getType2())) {
-                return true;
             }
         }
         return false;
-    }
-
-    public static double calculateDistanceBetweenPoints(int x1, int y1, int x2, int y2) {
-        return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
-    }
-
-    public static Color findColor(List<Way> ways, int i) {
-        Color color = Color.WHITE;
-        if (wayMachesType(ways.get(i), "Amenity")) {
-            color = getAmenityColor();
-        } else if (wayMachesType(ways.get(i), "Barrier")) {
-            color = getBarrierColor();
-        } else if (wayMachesType(ways.get(i), "Border type")) {
-            color = getBorderTypeColor();
-        } else if (wayMachesType(ways.get(i), "Building")) {
-            color = getBuildingColor();
-        } else if (wayMachesType(ways.get(i), "Coastline")) {
-            color = getCoastlineColor();
-        } else if (wayMachesType(ways.get(i), "Cuisine")) {
-            color = getCuisineColor();
-        } else if (wayMachesType(ways.get(i), "Compacted")) {
-            color = getCompactedColor();
-        } else if (wayMachesType(ways.get(i), "Earth")) {
-            color = getEarthColor();
-        } else if (wayMachesType(ways.get(i), "Footway")) {
-            color = getFootwayColor();
-        } else if (wayMachesType(ways.get(i), "Forest")) {
-            color = getForestColor();
-        } else if (wayMachesType(ways.get(i), "Grass")) {
-            color = getGrassColor();
-        } else if (wayMachesType(ways.get(i), "Ground")) {
-            color = getGroundColor();
-        } else if (wayMachesType(ways.get(i), "Highway")) {
-            color = getHighwayColor();
-        } else if (wayMachesType(ways.get(i), "Historic")) {
-            color = getHistoricColor();
-        } else if (wayMachesType(ways.get(i), "Leisure")) {
-            color = getLeisureColor();
-        } else if (wayMachesType(ways.get(i), "Name")) {
-            color = getNameColor();
-        } else if (wayMachesType(ways.get(i), "Natural")) {
-            color = getNaturalColor();
-        } else if (wayMachesType(ways.get(i), "Neighbourhood")) {
-            color = getNeighbourhoodColor();
-        } else if (wayMachesType(ways.get(i), "Tourism")) {
-            color = getTourismColor();
-        } else if (wayMachesType(ways.get(i), "Parking")) {
-            color = getParkingColor();
-        } else if (wayMachesType(ways.get(i), "Path")) {
-            color = getPathColor();
-        } else if (wayMachesType(ways.get(i), "Place")) {
-            color = getPlaceColor();
-        } else if (wayMachesType(ways.get(i), "Recycling")) {
-            color = getRecyclingColor();
-        } else if (wayMachesType(ways.get(i), "Residential")) {
-            color = getResidentialColor();
-        } else if (wayMachesType(ways.get(i), "Sand")) {
-            color = getSandColor();
-        } else if (wayMachesType(ways.get(i), "Sport")) {
-            color = getSportColor();
-        } else if (wayMachesType(ways.get(i), "Wall")) {
-            color = getWallColor();
-        } else if (wayMachesType(ways.get(i), "Water")) {
-            color = getWaterColor();
-        } else if (wayMachesType(ways.get(i), "Waterway")) {
-            color = getWaterwayColor();
-        } else if (wayMachesType(ways.get(i), "Wood")) {
-            color = getWoodColor();
-        } else {
-            List<Tag> tags = ways.get(i).getTags();
-            for (Tag tag : tags) {
-                System.out.println(tag.getType2());
-            }
-        }
-        return color;
-    }
-
-    public static Color getAmenityColor() {
-        return new Color(114, 224, 116);
-    }
-
-    public static Color getBarrierColor() {
-        return new Color(229, 222, 192);
-    }
-
-    public static Color getBorderTypeColor() {
-        return new Color(135, 133, 127);
-    }
-
-    public static Color getBuildingColor() {
-        return new Color(255, 244, 214);
-    }
-
-    public static Color getCoastlineColor() {
-        return new Color(247, 230, 153);
-    }
-
-    public static Color getCompactedColor() {
-        return new Color(81, 69, 55);
-    }
-
-    public static Color getCuisineColor() {
-        return new Color(230, 249, 52);
-    }
-
-    public static Color getEarthColor() {
-        return new Color(58, 31, 1);
-    }
-
-    public static Color getFootwayColor() {
-        return new Color(132, 108, 79);
-    }
-
-    public static Color getForestColor() {
-        return new Color(17, 89, 17);
-    }
-
-    public static Color getGrassColor() {
-        return new Color(151, 229, 144);
-    }
-
-    public static Color getGroundColor() {
-        return new Color(183, 118, 88);
-    }
-
-    public static Color getHighwayColor() {
-        return new Color(204, 196, 177);
-    }
-
-    public static Color getHistoricColor() {
-        return new Color(114, 224, 116);
-    }
-
-    public static Color getLeisureColor() {
-        return new Color(114, 224, 116);
-    }
-
-    public static Color getNameColor() {
-        return new Color(45, 44, 42);
-    }
-
-    public static Color getNaturalColor() {
-        return new Color(114, 224, 116);
-    }
-
-    public static Color getNeighbourhoodColor() {
-        return new Color(162, 216, 151);
-    }
-
-    public static Color getTourismColor() {
-        return new Color(114, 224, 116);
-    }
-
-    public static Color getParkingColor() {
-        return new Color(114, 224, 116);
-    }
-
-    public static Color getPathColor() {
-        return new Color(229, 199, 162);
-    }
-
-    public static Color getPlaceColor() {
-        return new Color(29, 29, 42);
-    }
-
-    public static Color getRecyclingColor() {
-        return new Color(88, 183, 67);
-    }
-
-    public static Color getResidentialColor() {
-        return new Color(177, 204, 171);
-    }
-
-    public static Color getSandColor() {
-        return new Color(255, 253, 178);
-    }
-
-    public static Color getSportColor() {
-        return new Color(112, 206, 92);
-    }
-
-    public static Color getWallColor() {
-        return new Color(230, 234, 237);
-    }
-
-    public static Color getWaterColor() {
-        return new Color(110, 186, 244);
-    }
-
-    public static Color getWaterwayColor() {
-        return new Color(110, 186, 244);
-    }
-
-    public static Color getWoodColor() {
-        return new Color(78, 114, 75);
     }
 
     /**
@@ -415,7 +215,7 @@ public class MapDrawer {
      * @return a list of x,y coordinates
      * @throws DrawingException
      */
-    public static List<int[]> computeNodePosition(Map map, List<Node> idNodesList) {
+    public static List<int[]> computeNodePosition(Map map, List<Node> idNodesList, boolean isPolygon) {
         int[] xPoints = new int[idNodesList.size()];
         int[] yPoints = new int[idNodesList.size()];
 
@@ -435,7 +235,9 @@ public class MapDrawer {
             pixelList.add(point2D);
         }
 
-        pixelList = reorderPolygonNodesBeforeDrawing(pixelList);
+        if (isPolygon) {
+            pixelList = reorderPolygonNodesBeforeDrawing(pixelList);
+        }
 
         List<int[]> xyPoints = new ArrayList<>();
 
@@ -510,7 +312,7 @@ public class MapDrawer {
                     }
                 }
             } catch (Exception e) {
-                logger.error(e);
+                //logger.error(e);
             }
         }
         return reorderedPoints;

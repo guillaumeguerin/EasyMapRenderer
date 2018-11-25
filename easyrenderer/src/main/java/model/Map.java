@@ -16,15 +16,6 @@ public class Map {
     private HashMap<Integer, Node> nodes;
     private List<Way> ways;
     private List<Relation> relations;
-    private HashMap<String, Boolean> typesToDrawParametersMap;
-
-    public HashMap<String, Boolean> getTypesToDrawParametersMap() {
-        return typesToDrawParametersMap;
-    }
-
-    public void setTypesToDrawParametersMap(HashMap<String, Boolean> map) {
-        typesToDrawParametersMap = map;
-    }
 
     public HashMap<Integer, Node> getNodes() {
         return nodes;
@@ -50,14 +41,14 @@ public class Map {
         if (minNode == null || minNode.getLatitude() == null) {
             minNode = computeMinNode();
             try {
-            	String[] latlonSplit = MapOutputView.MIN_NODE.split(",");
-            	if(latlonSplit.length > 1) {
-            		String latitude = MapOutputView.MIN_NODE.split(",")[0];
+                String[] latlonSplit = MapOutputView.MIN_NODE.split(",");
+                if (latlonSplit.length > 1) {
+                    String latitude = MapOutputView.MIN_NODE.split(",")[0];
                     String longitude = MapOutputView.MIN_NODE.split(",")[1];
                     minNode = new Node();
                     minNode.setLatitude(Double.parseDouble(latitude));
                     minNode.setLongitude(Double.parseDouble(longitude));
-            	}
+                }
             } catch (Exception e) {
                 logger.error(e);
             }
@@ -69,14 +60,14 @@ public class Map {
         if (maxNode == null) {
             maxNode = computeMaxNode();
             try {
-            	String[] latlonSplit = MapOutputView.MAX_NODE.split(",");
-            	if(latlonSplit.length > 1) {
-            		String lat = MapOutputView.MAX_NODE.split(",")[0];
+                String[] latlonSplit = MapOutputView.MAX_NODE.split(",");
+                if (latlonSplit.length > 1) {
+                    String lat = MapOutputView.MAX_NODE.split(",")[0];
                     String lon = MapOutputView.MAX_NODE.split(",")[1];
                     maxNode = new Node();
                     maxNode.setLatitude(Double.parseDouble(lat));
                     maxNode.setLongitude(Double.parseDouble(lon));
-            	}
+                }
             } catch (Exception e) {
                 logger.error(e);
             }
@@ -116,7 +107,7 @@ public class Map {
      * Gets the minimum latitude and longitude and creates a new Node
      *
      * @param nodes list of nodes
-     * @return
+     * @return the minimum node
      */
     public Node computeMinNode(List<Node> nodes) {
         Double minLat = null;
@@ -145,7 +136,7 @@ public class Map {
      * Gets the maximum latitude and longitude and creates a new Node
      *
      * @param nodes list of nodes
-     * @return
+     * @return the maximum node
      */
     public Node computeMaxNode(List<Node> nodes) {
         Double maxLat = null;
@@ -200,4 +191,5 @@ public class Map {
     public Double getLonScale() {
         return this.getMaxNode().getLongitude() - this.getMinNode().getLongitude();
     }
+
 }

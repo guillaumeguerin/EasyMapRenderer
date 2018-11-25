@@ -12,7 +12,6 @@ import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MapOutputView extends VBox {
@@ -87,13 +86,6 @@ public class MapOutputView extends VBox {
 
     }
 
-    private HashMap getParametersToDrawToMap() {
-        HashMap<String, Boolean> typesToDraw = null;
-        if (this.getParent() instanceof CenterView) {
-            typesToDraw = (HashMap<String, Boolean>) ((CenterView) this.getParent()).getParameters();
-        }
-        return typesToDraw;
-    }
 
     private void updatePreview() {
         if (this.getParent() != null) {
@@ -101,7 +93,7 @@ public class MapOutputView extends VBox {
             for (Node guiNode : guiNodes) {
                 if (guiNode instanceof MapPreviewView) {
                     MapPreviewView guiPreview = (MapPreviewView) guiNode;
-                    guiPreview.setImage(MapPreviewView.buildImage(getParametersToDrawToMap()));
+                    guiPreview.setImage(MapPreviewView.buildImage());
                 }
             }
         }

@@ -4,12 +4,15 @@ import database.SQLiteJDBC;
 import exceptions.ParseException;
 import model.Map;
 import model.Way;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class SQLiteJDBCTest {
 
     @Test
