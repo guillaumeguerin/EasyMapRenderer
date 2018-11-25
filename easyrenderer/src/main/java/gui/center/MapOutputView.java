@@ -29,16 +29,17 @@ public class MapOutputView extends VBox {
         File folder = new File(".");
         File[] listOfFiles = folder.listFiles();
 
-        List<String> cssList = new ArrayList<>();
+        List<String> jsonList = new ArrayList<>();
+        jsonList.add("default_style.json");
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
 
-                if (listOfFiles[i].getName().endsWith(".css")) {
-                    cssList.add(listOfFiles[i].getName());
+                if (listOfFiles[i].getName().endsWith(".json")) {
+                    jsonList.add(listOfFiles[i].getName());
                 }
             }
         }
-        ObservableList cssObservableList = FXCollections.observableList(cssList);
+        ObservableList cssObservableList = FXCollections.observableList(jsonList);
         ChoiceBox cssListView = new ChoiceBox(cssObservableList);
 
         ChoiceBox outputListView = new ChoiceBox(FXCollections.observableArrayList("PNG", "Heightmap"));

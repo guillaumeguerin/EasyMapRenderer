@@ -103,7 +103,7 @@ public class MapDrawer {
      */
     public static void drawWayOnImage(Graphics2D image, Map map, List<Way> ways, int index) {
         Way currentWay = ways.get(index);
-        if (!userWantsWayToBeDrawn(map, currentWay)) {
+        if (!userWantsWayToBeDrawn(currentWay)) {
             return;
         }
 
@@ -139,11 +139,10 @@ public class MapDrawer {
     /**
      * Does the user has checked the check box in the GUI ?
      *
-     * @param m
-     * @param w
+     * @param w the way
      * @return
      */
-    private static boolean userWantsWayToBeDrawn(Map m, Way w) {
+    private static boolean userWantsWayToBeDrawn(Way w) {
         UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
         HashMap<String, Boolean> parameters = designSingleton.getCheckedParameters();
         if (parameters != null && w.getTags() != null && w.getTags().size() > 0 && w.getTags().get(0).getType2() != null) {
@@ -171,8 +170,9 @@ public class MapDrawer {
         if (polygonTypes != null) {
             List<Tag> tags = way.getTags();
             for (Tag tag : tags) {
-                if (polygonTypes.containsKey(tag.getType2())) {
-                    return "polygon".equals(polygonTypes.get(tag.getType2()));
+                String type = capitalizeString(tag.getType2());
+                if (polygonTypes.containsKey(type)) {
+                    return "polygon".equals(polygonTypes.get(type));
                 }
 
             }

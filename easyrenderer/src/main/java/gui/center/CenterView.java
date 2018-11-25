@@ -14,6 +14,7 @@ public class CenterView extends HBox {
     public CenterView() {
         super();
         this.setSpacing(15);
+
         this.getChildren().add(mapPreviewView);
         this.getChildren().add(mapOutputView);
         this.getChildren().add(mapParametersView);

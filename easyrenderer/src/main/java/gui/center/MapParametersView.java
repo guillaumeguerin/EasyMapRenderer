@@ -32,7 +32,10 @@ public class MapParametersView extends VBox {
         designSingleton = UserDesignSingleton.getInstance();
         Set<String> properties = designSingleton.getCheckedParameters().keySet();
         for (String property : properties) {
-            listCheckboxes.getChildren().add(new CheckBox(property));
+            CheckBox checkbox = new CheckBox(property);
+            //Style
+
+            listCheckboxes.getChildren().add(checkbox);
         }
 
         //Set all checkboxes to true

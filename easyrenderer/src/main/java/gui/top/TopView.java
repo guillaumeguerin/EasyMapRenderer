@@ -49,6 +49,9 @@ public class TopView extends HBox {
 
         });
 
+        //Style
+        choiceLabel.setStyle("-fx-padding: 5 0 0 0;");
+
         this.getChildren().add(choiceLabel);
         this.getChildren().add(dialogPath);
         this.getChildren().add(browseButton);

@@ -1,0 +1,46 @@
+.button {
+    -fx-background-color: #f9f6ff;
+    -fx-border-color: #6db3ff;
+    -fx-border-width: 1px;
+}
+
+.text-field {
+    -fx-background-color: #f9f6ff;
+    -fx-border-color: #6db3ff;
+    -fx-border-width: 1px;
+}
+
+.choice-box {
+    -fx-background-color: #f9f6ff;
+    -fx-border-color: #6db3ff;
+    -fx-border-width: 1px;
+}
+
+.check-box .box {
+    -fx-background-color: #f9f6ff;
+    -fx-border-color: #6db3ff;
+    -fx-border-width: 1px;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #3791ff;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #c9e2f4;
+}
+
+.scroll-pane {
+    -fx-background-color: #f9f6ff;
+}
+
+.scroll-bar {
+    -fx-background-color: #f9f6ff;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: derive(black, 90.0%);
+    -fx-background-insets: 2.0, 0.0, 0.0;
+    -fx-background-radius: 2.0em;
+}

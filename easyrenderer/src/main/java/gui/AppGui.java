@@ -9,8 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 
 public class AppGui {
+
+    private static final Logger logger = Logger.getLogger(AppGui.class);
 
     public static Stage buildPrimaryStage(Stage primaryStage) {
         primaryStage.setTitle("Easy Map Renderer");
@@ -30,6 +33,10 @@ public class AppGui {
 
         //Add the BorderPane to the Scene
         Scene appScene = new Scene(componentLayout, 700, 500);
+
+        //Styling application
+        String css = AppGui.class.getResource("/gui/style.css").toExternalForm();
+        appScene.getStylesheets().add(css);
 
         //Add the Scene to the Stage
         primaryStage.setScene(appScene);
