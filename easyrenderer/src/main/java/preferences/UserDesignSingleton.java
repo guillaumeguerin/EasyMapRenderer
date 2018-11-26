@@ -19,6 +19,8 @@ public class UserDesignSingleton {
     private HashMap<String, Boolean> checkedParameters = new HashMap<>();
     private HashMap<String, Color> typeToColorMap = new HashMap<>();
     private HashMap<String, String> typeToPolygonMap = new HashMap<>();
+    private String minNode = "";
+    private String maxNode = "";
 
     private static UserDesignSingleton instance;
 
@@ -76,5 +78,21 @@ public class UserDesignSingleton {
 
     public void setTypeToPolygonMap(HashMap<String, String> typeToPolygonMap) {
         this.typeToPolygonMap = typeToPolygonMap;
+    }
+
+    public String getMinNode() {
+        return minNode;
+    }
+
+    public void setMinNode(String minNode) {
+        this.minNode = minNode;
+    }
+
+    public String getMaxNode() {
+        return maxNode;
+    }
+
+    public void setMaxNode(String maxNode) {
+        this.maxNode = maxNode;
     }
 }

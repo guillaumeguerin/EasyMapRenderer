@@ -51,6 +51,7 @@ public class TopView extends HBox {
 
         //Style
         choiceLabel.setStyle("-fx-padding: 5 0 0 0;");
+        drawButton.setStyle("-fx-background-color: #75b1ff;-fx-border-color: #00299d;-fx-text-fill: white;");
 
         this.getChildren().add(choiceLabel);
         this.getChildren().add(dialogPath);

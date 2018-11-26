@@ -1,7 +1,7 @@
 package model;
 
-import gui.center.MapOutputView;
 import org.apache.log4j.Logger;
+import preferences.UserDesignSingleton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,13 +41,16 @@ public class Map {
         if (minNode == null || minNode.getLatitude() == null) {
             minNode = computeMinNode();
             try {
-                String[] latlonSplit = MapOutputView.MIN_NODE.split(",");
-                if (latlonSplit.length > 1) {
-                    String latitude = MapOutputView.MIN_NODE.split(",")[0];
-                    String longitude = MapOutputView.MIN_NODE.split(",")[1];
-                    minNode = new Node();
-                    minNode.setLatitude(Double.parseDouble(latitude));
-                    minNode.setLongitude(Double.parseDouble(longitude));
+                UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+                if (!designSingleton.getMinNode().isEmpty()) {
+                    String[] latlonSplit = designSingleton.getMinNode().split(",");
+                    if (latlonSplit.length > 1) {
+                        String latitude = designSingleton.getMinNode().split(",")[0];
+                        String longitude = designSingleton.getMinNode().split(",")[1];
+                        minNode = new Node();
+                        minNode.setLatitude(Double.parseDouble(latitude));
+                        minNode.setLongitude(Double.parseDouble(longitude));
+                    }
                 }
             } catch (Exception e) {
                 logger.error(e);
@@ -60,13 +63,16 @@ public class Map {
         if (maxNode == null) {
             maxNode = computeMaxNode();
             try {
-                String[] latlonSplit = MapOutputView.MAX_NODE.split(",");
-                if (latlonSplit.length > 1) {
-                    String lat = MapOutputView.MAX_NODE.split(",")[0];
-                    String lon = MapOutputView.MAX_NODE.split(",")[1];
-                    maxNode = new Node();
-                    maxNode.setLatitude(Double.parseDouble(lat));
-                    maxNode.setLongitude(Double.parseDouble(lon));
+                UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+                if (!designSingleton.getMaxNode().isEmpty()) {
+                    String[] latlonSplit = designSingleton.getMaxNode().split(",");
+                    if (latlonSplit.length > 1) {
+                        String lat = designSingleton.getMaxNode().split(",")[0];
+                        String lon = designSingleton.getMaxNode().split(",")[1];
+                        maxNode = new Node();
+                        maxNode.setLatitude(Double.parseDouble(lat));
+                        maxNode.setLongitude(Double.parseDouble(lon));
+                    }
                 }
             } catch (Exception e) {
                 logger.error(e);

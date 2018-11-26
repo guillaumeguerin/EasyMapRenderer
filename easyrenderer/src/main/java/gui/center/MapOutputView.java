@@ -9,6 +9,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import preferences.UserDesignSingleton;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,8 +17,6 @@ import java.util.List;
 
 public class MapOutputView extends VBox {
 
-    public static String MIN_NODE = "";
-    public static String MAX_NODE = "";
     public static String BACKGROUND_COLOR = "";
 
     public MapOutputView() {
@@ -62,12 +61,14 @@ public class MapOutputView extends VBox {
 
         TextField dialogMinNode = new TextField();
         dialogMinNode.textProperty().addListener((observable, oldValue, newValue) -> {
-            MIN_NODE = newValue;
+            UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+            designSingleton.setMinNode(newValue);
         });
 
         TextField dialogMaxNode = new TextField();
         dialogMaxNode.textProperty().addListener((observable, oldValue, newValue) -> {
-            MAX_NODE = newValue;
+            UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+            designSingleton.setMaxNode(newValue);
         });
 
         this.getChildren().add(new Label("Zoom"));
