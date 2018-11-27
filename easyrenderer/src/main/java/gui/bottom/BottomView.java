@@ -4,7 +4,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.Optional;
@@ -33,6 +35,10 @@ public class BottomView extends HBox {
             //Styling application
             String css = BottomView.class.getResource("/gui/style.css").toExternalForm();
             dialogPane.getStylesheets().add(css);
+
+            //Icon
+            Stage stage = (Stage) dialogPane.getScene().getWindow();
+            stage.getIcons().add(new Image(BottomView.class.getResourceAsStream("/gui/icon.png")));
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {

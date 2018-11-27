@@ -17,7 +17,7 @@ public class AppGui {
 
     public static Stage buildPrimaryStage(Stage primaryStage) {
         primaryStage.setTitle("Easy Map Renderer");
-        primaryStage.getIcons().add(new Image(AppGui.class.getResourceAsStream("icon.png")));
+        primaryStage.getIcons().add(new Image(AppGui.class.getResourceAsStream("/gui/icon.png")));
 
         BorderPane componentLayout = new BorderPane();
         Insets insets = new Insets(20, 0, 20, 20);
