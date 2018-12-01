@@ -5,9 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -21,6 +19,8 @@ public class UserDesignSingleton {
     private HashMap<String, String> typeToPolygonMap = new HashMap<>();
     private String minNode = "";
     private String maxNode = "";
+    private int zoom = 1;
+    private String jsonDesign = "default_style.json";
 
     private static UserDesignSingleton instance;
 
@@ -39,8 +39,28 @@ public class UserDesignSingleton {
         return instance;
     }
 
-    private void loadProperties() {
-        InputStream in = MapPreviewView.class.getClassLoader().getResourceAsStream("default_style.json");
+    public void loadProperties() {
+        loadJsonProperties();
+    }
+
+    private void loadJsonProperties() {
+        InputStream in = MapPreviewView.class.getClassLoader().getResourceAsStream(jsonDesign);
+        try {
+            if (!"default_style.json".equals(jsonDesign)) {
+                File folder = new File(".");
+                File[] listOfFiles = folder.listFiles();
+                for (File file : listOfFiles) {
+                    if (file.isFile()) {
+                        if (file.getName().endsWith(jsonDesign)) {
+                            in = new FileInputStream(file);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+
+        }
+
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String jsonContent = br.lines().collect(Collectors.joining());
         JSONArray arrayProperties = new JSONArray(jsonContent);
@@ -94,5 +114,21 @@ public class UserDesignSingleton {
 
     public void setMaxNode(String maxNode) {
         this.maxNode = maxNode;
+    }
+
+    public int getZoom() {
+        return zoom;
+    }
+
+    public void setZoom(int zoom) {
+        this.zoom = zoom;
+    }
+
+    public String getJsonDesign() {
+        return jsonDesign;
+    }
+
+    public void setJsonDesign(String jsonDesign) {
+        this.jsonDesign = jsonDesign;
     }
 }

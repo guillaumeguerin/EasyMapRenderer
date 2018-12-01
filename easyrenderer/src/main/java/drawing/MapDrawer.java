@@ -33,17 +33,59 @@ public class MapDrawer {
     }
 
     /**
-     * Draws the map and save it to a file
+     * Draws the map tiles
      *
      * @param map the map
      */
     public static void drawMap(Map map) {
+        UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+        int zoom = (int) Math.pow(designSingleton.getZoom(), 2);
+        for (int j = 0; j < zoom; j++) {
+            for (int i = 0; i < zoom; i++) {
+                map = computeTileDistance(map, zoom, i, j);
+                drawMapWithZoom(map, i);
+            }
+        }
+    }
+
+    private static Map computeTileDistance(Map map, int zoom, int i, int j) {
+        //TODO: compute min node for each tile
+        Double zoomLatScale = map.getLatScale() / zoom;
+        Double zoomLonScale = map.getLonScale() / zoom;
+        UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+        if (i != 0 && j != 0) {
+            String[] minNodeSplit = designSingleton.getMinNode().split(", ");
+            Node minNode = new Node(0., Double.parseDouble(minNodeSplit[0]), Double.parseDouble(minNodeSplit[1]));
+            /*String[] maxNodeSplit = designSingleton.getMaxNode().split(", ");
+            Node maxNode = new Node(0., Double.parseDouble(maxNodeSplit[0]), Double.parseDouble(maxNodeSplit[1]));*/
+            Node maxNode = new Node(minNode.getId(), minNode.getLatitude(), minNode.getLongitude());
+            maxNode.setLatitude(maxNode.getLatitude() + (zoomLatScale * i));
+            maxNode.setLongitude(maxNode.getLongitude() + (zoomLatScale * j));
+            designSingleton.setMinNode(minNode.getLatitude() + ", " + minNode.getLongitude());
+            designSingleton.setMaxNode(maxNode.getLatitude() + ", " + maxNode.getLongitude());
+        } else {
+            if (designSingleton.getMinNode().isEmpty()) {
+                designSingleton.setMinNode(map.getMinNode().getLatitude() + ", " + map.getMinNode().getLongitude());
+            }
+            if (designSingleton.getMaxNode().isEmpty()) {
+                designSingleton.setMaxNode(map.getMaxNode().getLatitude() + ", " + map.getMaxNode().getLongitude());
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Draws the map and save it to a file according to the Zoom
+     *
+     * @param map the map
+     */
+    private static void drawMapWithZoom(Map map, int index) {
         try {
             BufferedImage bi = drawMapOnImage(map);
-            String filePath = System.getProperty("user.dir") + "\\map.PNG";
+            String filePath = System.getProperty("user.dir") + "\\map_" + index + ".PNG";
             ImageIO.write(bi, "PNG", new File(filePath));
-
-        } catch (IOException ie) {
+        } catch (
+                IOException ie) {
             logger.error(ie);
         }
     }
@@ -108,18 +150,22 @@ public class MapDrawer {
         }
 
         List<Node> idNodesList = currentWay.getNodes();
-
         List<int[]> xyPoints = computeNodePosition(map, idNodesList, isWayPolygon(map, currentWay));
         int[] xPoints = xyPoints.get(0);
         int[] yPoints = xyPoints.get(1);
 
         UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
         Color color = Color.WHITE;
-        String currentType = ways.get(index).getTags().get(0).getType2();
-        currentType = capitalizeString(currentType);
-        if (!(ways.get(index).getTags().isEmpty()) && designSingleton.getTypeToColorMap() != null && designSingleton.getTypeToColorMap().containsKey(currentType)) {
-            color = designSingleton.getTypeToColorMap().get(currentType);
+        String currentType = "";
+
+        if (ways.size() > index && ways.get(index).getTags() != null && ways.get(index).getTags().size() > 0) {
+            currentType = ways.get(index).getTags().get(0).getType2();
+            currentType = capitalizeString(currentType);
+            if (!(ways.get(index).getTags().isEmpty()) && designSingleton.getTypeToColorMap() != null && designSingleton.getTypeToColorMap().containsKey(currentType)) {
+                color = designSingleton.getTypeToColorMap().get(currentType);
+            }
         }
+
 
         image.setColor(color);
 

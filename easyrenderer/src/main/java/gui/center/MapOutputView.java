@@ -23,11 +23,20 @@ public class MapOutputView extends VBox {
         super();
         this.setSpacing(2);
 
+        //Zoom
         ChoiceBox zoomListView = new ChoiceBox(FXCollections.observableArrayList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"));
+        zoomListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
+                UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+                designSingleton.setZoom(Integer.parseInt(zoomListView.getItems().get((Integer) number2).toString()));
+                designSingleton.loadProperties();
+                updatePreview();
+            }
+        });
 
+        //Design
         File folder = new File(".");
         File[] listOfFiles = folder.listFiles();
-
         List<String> jsonList = new ArrayList<>();
         jsonList.add("default_style.json");
         for (int i = 0; i < listOfFiles.length; i++) {
@@ -38,13 +47,24 @@ public class MapOutputView extends VBox {
                 }
             }
         }
-        ObservableList cssObservableList = FXCollections.observableList(jsonList);
-        ChoiceBox cssListView = new ChoiceBox(cssObservableList);
+        ObservableList jsonObservableList = FXCollections.observableList(jsonList);
+        ChoiceBox jsonListView = new ChoiceBox(jsonObservableList);
+        jsonListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
+                UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+                designSingleton.setJsonDesign(jsonListView.getItems().get((Integer) number2).toString());
+                designSingleton.loadProperties();
+                updatePreview();
+            }
+        });
 
+        //Output
         ChoiceBox outputListView = new ChoiceBox(FXCollections.observableArrayList("PNG", "Heightmap"));
 
-        ChoiceBox languageListView = new ChoiceBox(FXCollections.observableArrayList("English", "French"));
+        //Language
+        ChoiceBox languageListView = new ChoiceBox(FXCollections.observableArrayList("None", "English", "French"));
 
+        //Background
         ChoiceBox backgroundListView = new ChoiceBox(FXCollections.observableArrayList("White", "Black", "Blue", "Green"));
         backgroundListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
@@ -53,12 +73,14 @@ public class MapOutputView extends VBox {
             }
         });
 
+        //Set first element for all choiceboxes
         zoomListView.getSelectionModel().selectFirst();
-        cssListView.getSelectionModel().selectFirst();
+        jsonListView.getSelectionModel().selectFirst();
         outputListView.getSelectionModel().selectFirst();
         languageListView.getSelectionModel().selectFirst();
         backgroundListView.getSelectionModel().selectFirst();
 
+        //Boundaries
         TextField dialogMinNode = new TextField();
         dialogMinNode.textProperty().addListener((observable, oldValue, newValue) -> {
             UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
@@ -74,7 +96,7 @@ public class MapOutputView extends VBox {
         this.getChildren().add(new Label("Zoom"));
         this.getChildren().add(zoomListView);
         this.getChildren().add(new Label("Style"));
-        this.getChildren().add(cssListView);
+        this.getChildren().add(jsonListView);
         this.getChildren().add(new Label("Output"));
         this.getChildren().add(outputListView);
         this.getChildren().add(new Label("Language"));

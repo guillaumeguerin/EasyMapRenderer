@@ -10,8 +10,11 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import preferences.UserDesignSingleton;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MapParametersView extends VBox {
 
@@ -30,11 +33,13 @@ public class MapParametersView extends VBox {
 
         //Load checkboxes and set properties
         designSingleton = UserDesignSingleton.getInstance();
+        //Sort properties
         Set<String> properties = designSingleton.getCheckedParameters().keySet();
-        for (String property : properties) {
+        List<String> propertiesSorted = properties.stream().collect(Collectors.toList());
+        Collections.sort(propertiesSorted, (o1, o2) -> o1.compareTo(o2));
+        //Add checkboxes
+        for (String property : propertiesSorted) {
             CheckBox checkbox = new CheckBox(property);
-            //Style
-
             listCheckboxes.getChildren().add(checkbox);
         }
 
