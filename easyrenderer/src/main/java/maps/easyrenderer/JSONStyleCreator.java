@@ -13,10 +13,29 @@ import java.util.stream.Collectors;
 public class JSONStyleCreator {
 
     public static void main(String[] args) throws Exception {
+        generateBlackAndWhiteTheme();
+        generateDarkTheme();
+        generateLightTheme();
+    }
+
+    private static JSONArray loadDefaultTheme() {
         InputStream in = MapPreviewView.class.getClassLoader().getResourceAsStream("default_style.json");
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String jsonContent = br.lines().collect(Collectors.joining());
-        JSONArray arrayProperties = new JSONArray(jsonContent);
+        return new JSONArray(jsonContent);
+    }
+
+    private static void writeJsonToFile(String fileName, JSONArray arrayProperties) throws Exception {
+        String path = JSONStyleCreator.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+        // try-with-resources statement
+        try (FileWriter file = new FileWriter(path + fileName)) {
+            file.write(arrayProperties.toString());
+        }
+    }
+
+    private static void generateBlackAndWhiteTheme() throws Exception {
+        JSONArray arrayProperties = loadDefaultTheme();
+
         for (int i = 0; i < arrayProperties.length(); i++) {
             JSONObject tagProperties = arrayProperties.getJSONObject(i);
             JSONArray colorRGBValues = tagProperties.getJSONArray("color");
@@ -26,10 +45,36 @@ public class JSONStyleCreator {
             colorRGBValues.put(2, color);
         }
 
-        String path = JSONStyleCreator.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-        // try-with-resources statement
-        try (FileWriter file = new FileWriter(path + "/black_white.json")) {
-            file.write(arrayProperties.toString());
+        writeJsonToFile("/black_white.json", arrayProperties);
+    }
+
+    private static void generateDarkTheme() throws Exception {
+        JSONArray arrayProperties = loadDefaultTheme();
+
+        for (int i = 0; i < arrayProperties.length(); i++) {
+            JSONObject tagProperties = arrayProperties.getJSONObject(i);
+            JSONArray colorRGBValues = tagProperties.getJSONArray("color");
+            int color = (colorRGBValues.getInt(0) + colorRGBValues.getInt(1) + colorRGBValues.getInt(2)) / 3 / 4;
+            colorRGBValues.put(0, color);
+            colorRGBValues.put(1, color);
+            colorRGBValues.put(2, color);
         }
+
+        writeJsonToFile("/dark.json", arrayProperties);
+    }
+
+    private static void generateLightTheme() throws Exception {
+        JSONArray arrayProperties = loadDefaultTheme();
+
+        for (int i = 0; i < arrayProperties.length(); i++) {
+            JSONObject tagProperties = arrayProperties.getJSONObject(i);
+            JSONArray colorRGBValues = tagProperties.getJSONArray("color");
+            int color = 255 - (colorRGBValues.getInt(0) + colorRGBValues.getInt(1) + colorRGBValues.getInt(2)) / 3 / 4;
+            colorRGBValues.put(0, color);
+            colorRGBValues.put(1, color);
+            colorRGBValues.put(2, color);
+        }
+
+        writeJsonToFile("/light.json", arrayProperties);
     }
 }

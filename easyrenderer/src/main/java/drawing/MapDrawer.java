@@ -399,6 +399,10 @@ public class MapDrawer {
             return new Color(174, 223, 249);
         } else if ("black".equalsIgnoreCase(colorValue)) {
             return new Color(0, 0, 0);
+        } else if ("dark".equalsIgnoreCase(colorValue)) {
+            return new Color(65, 65, 65);
+        } else if ("light".equalsIgnoreCase(colorValue)) {
+            return new Color(217, 217, 217);
         } else {
             return new Color(255, 255, 255);
             //return new Color(10, 10, 50);

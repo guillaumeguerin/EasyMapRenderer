@@ -65,7 +65,7 @@ public class MapOutputView extends VBox {
         ChoiceBox languageListView = new ChoiceBox(FXCollections.observableArrayList("None", "English", "French"));
 
         //Background
-        ChoiceBox backgroundListView = new ChoiceBox(FXCollections.observableArrayList("White", "Black", "Blue", "Green"));
+        ChoiceBox backgroundListView = new ChoiceBox(FXCollections.observableArrayList("White", "Black", "Blue", "Green", "Dark", "Light"));
         backgroundListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
                 BACKGROUND_COLOR = backgroundListView.getItems().get((Integer) number2).toString();
