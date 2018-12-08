@@ -18,4 +18,4 @@ The output can be customized through json files. Below is an example using the d
 
 Here are examples rendered with this application.
 
-![Farm](https://raw.githubusercontent.com/guillaumeguerin/EasyMapRenderer/master/output1.png "Farm")
+![Farm](https://raw.githubusercontent.com/guillaumeguerin/EasyMapRenderer/master/output1.PNG "Farm")
