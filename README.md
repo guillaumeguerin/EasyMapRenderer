@@ -30,7 +30,25 @@ You can use it to modify your database and optimize your render time.
 For example if the want to keep informations only related to rivers and lakes we can use the following SQL Query :
 
 ```SQL
-SELECT USED_BY FROM TAG WHERE TYPE2 IN ('lake','river')
+DELETE FROM TAG WHERE TYPE2 NOT IN ('lake','river');
+
+DELETE
+FROM RELATION
+WHERE ID NOT IN (
+	SELECT USED_BY FROM TAG WHERE TYPE2 IN ('lake','river')
+);
+
+DELETE
+FROM WAY
+WHERE ID NOT IN (
+	SELECT USED_BY FROM TAG WHERE TYPE2 IN ('lake','river')
+);
+
+DELETE
+FROM NODE
+WHERE ID NOT IN (
+	SELECT ID FROM WAY
+);
 ```
 
 
