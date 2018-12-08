@@ -32,7 +32,7 @@ public class AppGui {
         componentLayout.setBottom(new BottomView());
 
         //Add the BorderPane to the Scene
-        Scene appScene = new Scene(componentLayout, 700, 500);
+        Scene appScene = new Scene(componentLayout, 600, 450);
 
         //Styling application
         String css = AppGui.class.getResource("/gui/style.css").toExternalForm();

@@ -40,13 +40,15 @@ public class TopView extends HBox {
             }
         });
 
-        //The button uses an inner class to handle the button click event
+        Button resizeButton = new Button("Resize");
+        resizeButton.setOnAction(value -> {
+
+        });
+
         Button drawButton = new Button("Draw");
         drawButton.setOnAction(value -> {
             Map myMap = SQLiteJDBC.retrieveMapFromDB();
-
             MapDrawer.drawMap(myMap);
-
         });
 
         //Style
@@ -56,6 +58,7 @@ public class TopView extends HBox {
         this.getChildren().add(choiceLabel);
         this.getChildren().add(dialogPath);
         this.getChildren().add(browseButton);
+        this.getChildren().add(resizeButton);
         this.getChildren().add(drawButton);
     }
 }

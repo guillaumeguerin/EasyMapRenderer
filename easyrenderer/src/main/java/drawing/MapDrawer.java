@@ -2,6 +2,7 @@ package drawing;
 
 import exceptions.DrawingException;
 import gui.center.MapOutputView;
+import model.Map;
 import model.*;
 import org.apache.log4j.Logger;
 import preferences.UserDesignSingleton;
@@ -14,8 +15,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -100,12 +100,19 @@ public class MapDrawer {
         BufferedImage bi = new BufferedImage(Tile.width, Tile.height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D image = bi.createGraphics();
 
+        //TODO: start from relations
+        //TODO: use area
+        //TODO: separate lines from polygons
         List<Way> ways = map.getWays();
         List<Relation> relations = map.getRelations();
+
+        filterUsedWays(ways);
         ways = addRelationTagsToWay(ways, relations);
         ways = reOrderWays(ways);
 
-        image.setColor(getBackgroundColor());
+        Color backgroundColor = drawBackgroundFromUnusedOutterWay(relations);
+        //image.setColor(getBackgroundColor());
+        image.setColor(backgroundColor);
         image.fillRect(0, 0, Tile.width, Tile.height);
 
         for (int i = 0; i < ways.size(); i++) {
@@ -133,6 +140,29 @@ public class MapDrawer {
         image.drawImage(op.filter(bi, null), 0, 0, null);
 
         return bi;
+    }
+
+    private static Color drawBackgroundFromUnusedOutterWay(List<Relation> relations) {
+        Color color = Color.WHITE;
+        UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+        Set<Double> unusedWay = designSingleton.getAllWaysPossible();
+        for (Relation relation : relations) {
+            if (relation.getWayIds() != null) {
+                for (Double wayId : relation.getWayIds()) {
+                    if (unusedWay.contains(wayId)) {
+                        HashMap<String, Color> colorMap = designSingleton.getTypeToColorMap();
+                        for (Tag tag : relation.getTags()) {
+                            String type = tag.getType2();
+                            type = type.substring(0, 1).toUpperCase() + type.substring(1);
+                            if (colorMap.containsKey(type)) {
+                                color = colorMap.get(type);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return color;
     }
 
     /**
@@ -229,19 +259,22 @@ public class MapDrawer {
     /**
      * Adds relation tags to inner ways
      *
-     * @param ways
-     * @param relations
+     * @param ways      the ways
+     * @param relations the relations
      * @return
      */
     public static List<Way> addRelationTagsToWay(List<Way> ways, List<Relation> relations) {
+        String[] filterRoles = {"outer", "inner", "subarea"};
+
         for (int i = 0; i < relations.size(); i++) {
             Relation currentRelation = relations.get(i);
             List<Member> members = currentRelation.getMembers();
 
             for (int j = 0; j < members.size(); j++) {
                 Member currentMember = members.get(j);
-                if (currentMember.getRole().equals("outer")) {
-                    Double wayId = currentMember.getUsedBy();
+                boolean roleExists = Arrays.asList(filterRoles).stream().anyMatch(r -> currentMember.getRole().equals(r));
+                if (roleExists) {
+                    Double wayId = currentMember.getWayIsUsedByRelationId();
 
                     for (int k = 0; k < ways.size(); k++) {
                         if (ways.get(k).getId().equals(wayId)) {
@@ -407,5 +440,14 @@ public class MapDrawer {
             return new Color(255, 255, 255);
             //return new Color(10, 10, 50);
         }
+    }
+
+    private static void filterUsedWays(List<Way> ways) {
+        UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+        Set<Double> unusedWays = designSingleton.getAllWaysPossible();
+        for (Way way : ways) {
+            unusedWays.remove(way.getId());
+        }
+        designSingleton.setAllWaysPossible(unusedWays);
     }
 }

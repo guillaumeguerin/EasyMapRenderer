@@ -17,7 +17,7 @@ public class Relation implements Element {
         return id;
     }
 
-    public List<Double> getWays() {
+    public List<Double> getWayIds() {
         return ways;
     }
 

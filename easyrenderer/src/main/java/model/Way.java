@@ -10,7 +10,7 @@ public class Way implements Element {
     private static final Logger logger = Logger.getLogger(Way.class);
 
     private Double id;
-    private Double usedBy;
+    private Double relationId;
     private List<Node> nodes = new ArrayList<>();
     private List<Tag> tags = new ArrayList<>();
 
@@ -18,8 +18,8 @@ public class Way implements Element {
         return id;
     }
 
-    public Double getUsedBy() {
-        return usedBy;
+    public Double getRelationId() {
+        return relationId;
     }
 
     public List<Node> getNodes() {
@@ -34,8 +34,8 @@ public class Way implements Element {
         id = d;
     }
 
-    public void setUsedBy(Double d) {
-        usedBy = d;
+    public void setRelationId(Double id) {
+        relationId = id;
     }
 
     public void setNodes(List<Node> n) {
@@ -68,9 +68,9 @@ public class Way implements Element {
         return false;
     }
 
-    public Way(Double myId, Double usedBy, List<Node> nodes, List<Tag> tags) {
+    public Way(Double myId, Double relationId, List<Node> nodes, List<Tag> tags) {
         setId(myId);
-        setUsedBy(usedBy);
+        setRelationId(relationId);
         setNodes(nodes);
         setTags(tags);
     }

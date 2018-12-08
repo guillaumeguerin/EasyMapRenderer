@@ -6,15 +6,15 @@ package model;
 public class Member implements Element {
 
     private Double id;
-    private Double usedBy;
+    private Double wayIsUsedByRelationId;
     private String role;
 
     public Double getId() {
         return id;
     }
 
-    public Double getUsedBy() {
-        return usedBy;
+    public Double getWayIsUsedByRelationId() {
+        return wayIsUsedByRelationId;
     }
 
     public String getRole() {
@@ -25,17 +25,17 @@ public class Member implements Element {
         id = d;
     }
 
-    public void setUsedBy(Double d) {
-        usedBy = d;
+    public void setWayIsUsedByRelationId(Double id) {
+        wayIsUsedByRelationId = id;
     }
 
     public void setRole(String role) {
         this.role = role;
     }
 
-    public Member(Double myId, Double usedBy, String role) {
+    public Member(Double myId, Double wayIsUsedByRelationId, String role) {
         setId(myId);
-        setUsedBy(usedBy);
+        setWayIsUsedByRelationId(wayIsUsedByRelationId);
         setRole(role);
     }
 

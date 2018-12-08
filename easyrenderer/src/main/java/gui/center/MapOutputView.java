@@ -65,20 +65,20 @@ public class MapOutputView extends VBox {
         ChoiceBox languageListView = new ChoiceBox(FXCollections.observableArrayList("None", "English", "French"));
 
         //Background
-        ChoiceBox backgroundListView = new ChoiceBox(FXCollections.observableArrayList("White", "Black", "Blue", "Green", "Dark", "Light"));
+        /*ChoiceBox backgroundListView = new ChoiceBox(FXCollections.observableArrayList("White", "Black", "Blue", "Green", "Dark", "Light"));
         backgroundListView.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
                 BACKGROUND_COLOR = backgroundListView.getItems().get((Integer) number2).toString();
                 updatePreview();
             }
-        });
+        });*/
 
         //Set first element for all choiceboxes
         zoomListView.getSelectionModel().selectFirst();
         jsonListView.getSelectionModel().selectFirst();
         outputListView.getSelectionModel().selectFirst();
         languageListView.getSelectionModel().selectFirst();
-        backgroundListView.getSelectionModel().selectFirst();
+        //backgroundListView.getSelectionModel().selectFirst();
 
         //Boundaries
         TextField dialogMinNode = new TextField();
@@ -102,7 +102,7 @@ public class MapOutputView extends VBox {
         this.getChildren().add(new Label("Language"));
         this.getChildren().add(languageListView);
         this.getChildren().add(new Label("Background"));
-        this.getChildren().add(backgroundListView);
+        //this.getChildren().add(backgroundListView);
         this.getChildren().add(new Label("Min node"));
         this.getChildren().add(dialogMinNode);
         this.getChildren().add(new Label("Max node"));

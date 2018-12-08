@@ -1,12 +1,16 @@
 package preferences;
 
 import gui.center.MapPreviewView;
+import model.Member;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +25,9 @@ public class UserDesignSingleton {
     private String maxNode = "";
     private int zoom = 1;
     private String jsonDesign = "default_style.json";
+    private Set<Double> allWaysPossible = new HashSet();
 
+    //Used by the Singleton
     private static UserDesignSingleton instance;
 
     /**
@@ -130,5 +136,19 @@ public class UserDesignSingleton {
 
     public void setJsonDesign(String jsonDesign) {
         this.jsonDesign = jsonDesign;
+    }
+
+    public Set<Double> getAllWaysPossible() {
+        return allWaysPossible;
+    }
+
+    public void setAllWaysPossible(Set<Double> allWaysPossible) {
+        this.allWaysPossible = allWaysPossible;
+    }
+
+    public void addWaysPossible(List<Member> memberList) {
+        for (Member member : memberList) {
+            this.allWaysPossible.add(member.getWayIsUsedByRelationId());
+        }
     }
 }

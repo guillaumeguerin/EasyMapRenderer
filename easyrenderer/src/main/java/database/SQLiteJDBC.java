@@ -2,6 +2,7 @@ package database;
 
 import model.*;
 import org.apache.log4j.Logger;
+import preferences.UserDesignSingleton;
 
 import java.sql.*;
 import java.text.DecimalFormat;
@@ -288,7 +289,7 @@ public class SQLiteJDBC {
             Connection conn = ConnectionSingleton.getInstance().getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setDouble(1, SequenceSingleton.getInstance().getId().intValue());
-            pstmt.setDouble(2, member.getUsedBy());
+            pstmt.setDouble(2, member.getWayIsUsedByRelationId());
             pstmt.setString(3, member.getRole());
             pstmt.executeUpdate();
         } catch (Exception e) {
@@ -312,7 +313,7 @@ public class SQLiteJDBC {
             Connection conn = ConnectionSingleton.getInstance().getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setDouble(1, SequenceSingleton.getInstance().getId().intValue());
-            pstmt.setDouble(2, member.getUsedBy());
+            pstmt.setDouble(2, member.getWayIsUsedByRelationId());
             pstmt.setDouble(3, relation.getId());
             pstmt.setString(4, member.getRole());
             pstmt.executeUpdate();
@@ -376,8 +377,8 @@ public class SQLiteJDBC {
     }
 
     public static void updateWays(Relation r) {
-        for (int i = 0; i < r.getWays().size(); i++) {
-            updateWay(r, r.getWays().get(i));
+        for (int i = 0; i < r.getWayIds().size(); i++) {
+            updateWay(r, r.getWayIds().get(i));
         }
     }
 
@@ -594,6 +595,8 @@ public class SQLiteJDBC {
     }
 
     public static List<Relation> getRelations() {
+        UserDesignSingleton designSingleton = UserDesignSingleton.getInstance();
+
         String sql = "SELECT * FROM RELATION";
         List<Relation> relations = new ArrayList<>();
         ResultSet rs = null;
@@ -616,6 +619,9 @@ public class SQLiteJDBC {
                 }
                 Relation currentRelation = new Relation(id, null, tags, members);
                 relations.add(currentRelation);
+
+                //We look for unused outer ways in member relation tags
+                designSingleton.addWaysPossible(members);
             }
         } catch (Exception e) {
             logger.error(e);
