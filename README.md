@@ -54,4 +54,8 @@ WHERE ID NOT IN (
 
 ## Server
 
+<<<<<<< HEAD
 Go to http://localhost:8080/ to see the tile server ! 
+=======
+Go to http://localhost:8080/ to see the tile server ! 
+>>>>>>> bf93f658fe33ed9bc691972c0c76d05d0b970e89
