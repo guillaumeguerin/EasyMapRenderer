@@ -2,6 +2,7 @@ package maps.easyrenderer;
 
 import gui.center.MapPreviewView;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -18,7 +19,7 @@ public class JSONStyleCreator {
         generateLightTheme();
     }
 
-    private static JSONArray loadDefaultTheme() {
+    private static JSONArray loadDefaultTheme() throws JSONException {
         InputStream in = MapPreviewView.class.getClassLoader().getResourceAsStream("default_style.json");
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String jsonContent = br.lines().collect(Collectors.joining());

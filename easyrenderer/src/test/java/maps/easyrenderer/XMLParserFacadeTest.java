@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import database.SQLiteJDBC;
@@ -25,6 +26,7 @@ public class XMLParserFacadeTest {
 
 	private static final String FILENAME = "C:\\Users\\admin\\eclipse-workspace\\easyrenderer\\smallerset.osm";
 	
+	@Ignore
 	@Test
     public void testParserWithInvalidString() throws ParseException
     {

@@ -63,9 +63,7 @@ public class UserDesignSingleton {
                     }
                 }
             }
-        } catch (Exception e) {
-
-        }
+        
 
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String jsonContent = br.lines().collect(Collectors.joining());
@@ -79,6 +77,10 @@ public class UserDesignSingleton {
             typeToColorMap.put(tagName, itemColor);
             String polygon = tagProperties.getString("type");
             typeToPolygonMap.put(tagName, polygon);
+        }
+        
+        } catch (Exception e) {
+
         }
     }
 
