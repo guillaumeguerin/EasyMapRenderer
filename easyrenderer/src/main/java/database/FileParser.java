@@ -47,7 +47,8 @@ public class FileParser {
 
         for (int i = 0; i < osmList.size(); i++) {
             if (osmList.get(i) instanceof Way) {
-                SQLiteJDBC.updateAllNodes((Way) osmList.get(i));
+                //SQLiteJDBC.updateAllNodes((Way) osmList.get(i));
+                SQLiteJDBC.insertWayNodes((Way) osmList.get(i));
             }
             if (osmList.get(i) instanceof Relation) {
                 SQLiteJDBC.updateWays((Relation) osmList.get(i));

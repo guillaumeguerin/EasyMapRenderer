@@ -414,6 +414,15 @@
 		]
 	},
 	{
+		"tag": "Water_hazard",
+		"type": "polygon",
+		"color": [
+			110,
+			186,
+			244
+		]
+	},
+	{
 		"tag": "Waterway",
 		"type": "polygon",
 		"color": [

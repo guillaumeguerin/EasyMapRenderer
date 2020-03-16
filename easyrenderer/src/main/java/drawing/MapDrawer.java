@@ -198,7 +198,7 @@ public class MapDrawer {
 
 
         image.setColor(color);
-
+        
         if (isWayPolygon(map, currentWay)) {
             image.fillPolygon(xPoints, yPoints, xPoints.length);
         } else {
@@ -206,6 +206,7 @@ public class MapDrawer {
                 image.drawLine(xPoints[j], yPoints[j], xPoints[j + 1], yPoints[j + 1]);
             }
         }
+        
     }
 
     private static String capitalizeString(String str) {
@@ -298,10 +299,6 @@ public class MapDrawer {
         int[] xPoints = new int[idNodesList.size()];
         int[] yPoints = new int[idNodesList.size()];
 
-        if (!idNodesList.isEmpty()) {
-            idNodesList = Drawing.sortNodes(idNodesList);
-        }
-
         List<Point2D> pixelList = new ArrayList<>();
         for (int j = 0; j < idNodesList.size(); j++) {
             Node currentNode = idNodesList.get(j);
@@ -314,16 +311,7 @@ public class MapDrawer {
             pixelList.add(point2D);
         }
 
-        if (isPolygon) {
-            pixelList = reorderPolygonNodesBeforeDrawing(pixelList);
-        }
-
         List<int[]> xyPoints = new ArrayList<>();
-
-        for (int i = 0; i < pixelList.size(); i++) {
-            xPoints[i] = (int) pixelList.get(i).getX();
-            yPoints[i] = (int) pixelList.get(i).getY();
-        }
 
         xyPoints.add(xPoints);
         xyPoints.add(yPoints);

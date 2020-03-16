@@ -30,13 +30,17 @@ public class SQLiteJDBC {
             String sql = "CREATE TABLE NODE " +
                     "(ID DOUBLE PRIMARY KEY     NOT NULL," +
                     " LAT            REAL    NOT NULL, " +
-                    " LON            REAL    NOT NULL, " +
-                    " WAY            DOUBLE)";
+                    " LON            REAL    NOT NULL)";
             stmt.executeUpdate(sql);
 
             sql = "CREATE TABLE WAY " +
                     "(ID DOUBLE PRIMARY KEY    NOT NULL," +
                     " RELATION  DOUBLE)";
+            stmt.executeUpdate(sql);
+            
+            sql = "CREATE TABLE WAY_NODES " +
+                    "(ID_WAY DOUBLE NOT NULL," +
+                    " ID_NODE DOUBLE NOT NULL)";
             stmt.executeUpdate(sql);
 
             sql = "CREATE TABLE RELATION " +
@@ -103,7 +107,7 @@ public class SQLiteJDBC {
     }
 
     public static void insertNode(Node node) {
-        String sql = "INSERT INTO NODE(ID,LAT,LON,WAY) VALUES(?,?,?,?)";
+        String sql = "INSERT INTO NODE(ID,LAT,LON) VALUES(?,?,?)";
         PreparedStatement pstmt = null;
         try {
             Class.forName("org.sqlite.JDBC");
@@ -112,7 +116,6 @@ public class SQLiteJDBC {
             pstmt.setDouble(1, node.getId());
             pstmt.setDouble(2, node.getLatitude());
             pstmt.setDouble(3, node.getLongitude());
-            pstmt.setInt(4, 0);
             pstmt.executeUpdate();
         } catch (Exception e) {
             logger.error(e);
@@ -330,6 +333,37 @@ public class SQLiteJDBC {
         }
     }
 
+    public static void insertWayNodes(Way way) {
+    	List<Node> nodes = way.getNodes();
+        for (int i = 0; i < nodes.size(); i++) {
+        	Node node = nodes.get(i);
+        	insertWayNode(way, node);
+        }
+    }
+    
+    public static void insertWayNode(Way w, Node node) {
+    	String sql = "INSERT INTO WAY_NODES(ID_WAY, ID_NODE) VALUES(?,?)";
+    	PreparedStatement pstmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setDouble(1, w.getId());
+            pstmt.setDouble(2, node.getId());
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            logger.error(e);
+        } finally {
+            if (pstmt != null) {
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    logger.error(e);
+                }
+            }
+        }
+    }
+    
     public static void updateNode(Way w, Node node) {
         String sql = "UPDATE NODE SET WAY = ? WHERE ID = ?";
         PreparedStatement pstmt = null;
@@ -390,7 +424,6 @@ public class SQLiteJDBC {
 
     public static Map retrieveMapFromDB() {
         Map m = new Map();
-
         List<Way> ways = getWays();
         m.setWays(ways);
         List<Relation> relations = getRelations();
@@ -483,7 +516,7 @@ public class SQLiteJDBC {
     public static List<Node> getNodesFromWayId(Double wayId) {
         DecimalFormat df = new DecimalFormat("#");
         df.setMaximumFractionDigits(0);
-        String sql = "SELECT * FROM NODE WHERE WAY = " + df.format(wayId);
+        String sql = "SELECT ID_NODE FROM WAY_NODES WHERE ID_WAY = " + df.format(wayId) + " ORDER BY ROWID";
         List<Node> nodes = new ArrayList<>();
         ResultSet rs = null;
         Statement stmt = null;
@@ -494,8 +527,11 @@ public class SQLiteJDBC {
             rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                Node currentNode = new Node(rs.getDouble("ID"), rs.getDouble("LAT"), rs.getDouble("LON"));
-                nodes.add(currentNode);
+            	Double currentNodeId = rs.getDouble("ID_NODE");
+            	Node currentNode = getNodeFromId(currentNodeId);
+            	if(currentNode != null) {
+            		nodes.add(currentNode);
+            	}
             }
         } catch (Exception e) {
             logger.error(e);
@@ -516,6 +552,43 @@ public class SQLiteJDBC {
             }
         }
         return nodes;
+    }
+    
+    public static Node getNodeFromId(Double nodeId) {
+        DecimalFormat df = new DecimalFormat("#");
+        df.setMaximumFractionDigits(0);
+        String sql = "SELECT * FROM NODE WHERE ID = " + df.format(nodeId);
+        Node node = null;
+        ResultSet rs = null;
+        Statement stmt = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = ConnectionSingleton.getInstance().getConnection();
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                node = new Node(rs.getDouble("ID"), rs.getDouble("LAT"), rs.getDouble("LON"));
+            }
+        } catch (Exception e) {
+            logger.error(e);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    logger.error(e);
+                }
+            }
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    logger.error(e);
+                }
+            }
+        }
+        return node;
     }
 
     public static List<Tag> getTagsFromWayId(Double wayId) {
