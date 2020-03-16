@@ -99,6 +99,13 @@ public class MapDrawer {
     public static BufferedImage drawMapOnImage(Map map) {
         BufferedImage bi = new BufferedImage(Tile.width, Tile.height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D image = bi.createGraphics();
+        // for antialising geometric shapes
+        image.addRenderingHints( new RenderingHints( RenderingHints.KEY_ANTIALIASING,
+                                                   RenderingHints.VALUE_ANTIALIAS_ON ));
+        // for antialiasing text
+        image.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING,
+                              RenderingHints.VALUE_TEXT_ANTIALIAS_ON );
+
 
         //TODO: start from relations
         //TODO: use area
